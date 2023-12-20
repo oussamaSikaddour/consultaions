@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('personnel_infos', function (Blueprint $table) {
             $table->id();
-            $table->string('last_name');
-            $table->string('first_name');
+            $table->string('last_name')->nullable();
+            $table->string('first_name')->nullable();
             $table->string("card_number")->nullable()->unique();
             $table->string('birth_place')->nullable();
             $table->date('birth_date')->nullable();
