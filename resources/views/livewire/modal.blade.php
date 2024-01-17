@@ -9,10 +9,10 @@ aria-labelledby="dialog_label"
   <div class="modal__content">
     <div class="modal__header">
       <h2 id="dialog_label" class="sr-only" >info Modal</h2>
-      <h2 >{{ $title }}</h2>
-      <div class="modal__closer" wire:click="closeModal">
+      <h2 >@lang($title)</h2>
+      <button class="modal__closer" >
         <span ><i class="fa-solid fa-xmark"></i></span>
-      </div>
+      </button>
 
     </div>
     <div class="modal__body">
@@ -32,3 +32,12 @@ aria-labelledby="dialog_label"
 
   </div>
 </div>
+
+
+@script
+  <script>
+  document.addEventListener('model-will-be-close', function(event) {
+        @this.closeModal();
+    });
+  </script>
+@endscript

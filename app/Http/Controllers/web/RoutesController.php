@@ -14,9 +14,9 @@ class RoutesController extends Controller
 
 public function showAdminPage()
 {
-$title = "Dashboard";
+$title =__("pages.dashboard.page-title");
 $modalData= [
-             "title"=>"Ajout d'un établissement",
+             "title"=>__("pages.dashboard.add-establishment-btn-text"),
               "component"=>[
                            "name"=>'admin.establishment-modal',
                             "parameters"=> []
@@ -28,7 +28,7 @@ $modalData= [
 
 public function showSiteParametersPage()
 {
-$title = "site parameters";
+$title =__("pages.site-params.page-title");
  return view('pages.admin.site-parameters',compact('title'));
  }
 
@@ -37,9 +37,9 @@ $title = "site parameters";
 
 public function showUsersPage()
 {
-$title = "Users";
+$title =__("pages.users.page-title");
 $modalData= [
-             "title"=>"Ajout d'un administrateur d'application",
+             "title"=>"modals.user.for.add-super-admin",
               "component"=>[
                            "name"=>'user-modal',
                             "parameters"=> ['userableId'=>'1','userableType'=>'admin']
@@ -53,10 +53,11 @@ return view('pages.admin.users',compact('title','modalData'));
 
 public function showUserPage()
  {
-    $title = "Mes rendez-vous";
+
+    $title =__("pages.rendez-vous.page-title");
     $openedBy= auth()->id();
     $modalData= [
-                "title"=>"Ajout d'un dossier médical",
+                "title"=>'modals.m-file.for.add',
                   "component"=>[
                       "name"=>'user.medical-file-modal',
                        "parameters"=> []
@@ -66,11 +67,15 @@ public function showUserPage()
  }
 
 
-public function showEstablishmentPage($id = null)
+public function showEstablishmentPage()
 {
-        $title = "Établissement";
+
+     $title =__("pages.establishment.page-title");
+
+    $id=session('establishment_id');
+
         $modalData= [
-                     "title"=>"Ajout d'un service",
+                     "title"=>__("pages.establishment.add-service-btn-txt"),
                       "component"=>[
                                    "name"=>'establishment.service-modal',
                                     "parameters"=> ['establishmentId'=>$id]
@@ -82,11 +87,13 @@ public function showEstablishmentPage($id = null)
 
 
 
-public function showServicePage($id = null)
+public function showServicePage()
 {
-    $title = "Service";
+
+    $title =__("pages.services.page-title");
+    $id=session('service_id');
     $modalData= [
-                 "title"=>"Ajout de la planification des consultations",
+                 "title"=>"modals.planning.for.add",
                   "component"=>[
                                "name"=>'service.planning-modal',
                                 "parameters"=> ['serviceId'=>$id]
@@ -97,11 +104,13 @@ public function showServicePage($id = null)
         return view('pages.services.service',compact('title','modalData','id'));
 }
 
-public function showDoctorsPage($establishmentId=null)
+public function showDoctorsPage()
 {
-$title = "Médecins";
+    $title =__("pages.doctors.page-title");
+
+$establishmentId=session('establishment_id');
 $modalData= [
-             "title"=>"Ajout de médecin",
+             "title"=>"modals.user.for.add-doctor",
               "component"=>[
                            "name"=>'user-modal',
                             "parameters"=> ['userableId'=>$establishmentId,'userableType'=>'doctor']
@@ -113,9 +122,9 @@ return view('pages.services.doctors',compact('title','modalData',"establishmentI
 
 public function showPlaceOfConsultationPage()
 {
-    $title = "Lieux de consultations";
+    $title =__("pages.consultation-places.page-title");
     $modalData= [
-                 "title"=>"Ajout d'un lieu de consultation",
+                 "title"=>"modals.c-place.for.add",
                   "component"=>[
                                "name"=>'establishment.consultations-place-modal',
                                 "parameters"=> []
@@ -123,17 +132,18 @@ public function showPlaceOfConsultationPage()
                  ];
     return view('pages.establishments.consultationsPlaces',compact('title','modalData'));
 }
-public function showPlaceOfConsultationAdminPage($id = null)
+public function showPlaceOfConsultationAdminPage()
 {
-    $title = "Consultation place";
-    return view('pages.consultations-places.admin',compact('title','id'));
+$title =__("pages.consultations-place.page-title");
+$id=session('consultation_place_id');
+return view('pages.consultations-places.admin',compact('title','id'));
 }
 
 
 
 public function showDoctorPage()
 {
-    $title = "Médecin";
+    $title = __("pages.doctor.page-title");
     $showForDoctor=true;
     $userId=auth()->id();
     return view('pages.doctor.doctor',compact('title','userId','showForDoctor'));

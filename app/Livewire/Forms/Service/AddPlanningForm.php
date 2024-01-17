@@ -29,11 +29,11 @@ class AddPlanningForm extends Form
     public function validationAttributes()
     {
         return [
-            'year' => 'année',
-            'month' => 'mois',
-            'name' => 'nom',
+            'year' => __("modals.planning.year"),
+            'month' =>__("modals.planning.month"),
+            'name' => __("modals.planning.name"),
             'service_id' => 'service',
-            'state' => 'état'
+            'state' =>__("modals.planning.state")
         ];
     }
 
@@ -45,7 +45,7 @@ class AddPlanningForm extends Form
             Planning::create($validatedData);
             return [
                 'status' => true,
-                'success' => 'La planification a été créée avec succès',
+                'success' => __("forms.planning.add.success-txt"),
             ];
         } catch (\Exception $e) {
             return [

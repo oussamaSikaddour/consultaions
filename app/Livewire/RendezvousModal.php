@@ -34,7 +34,9 @@ class RendezvousModal extends Component
     #[Computed()]
     public function consultationsPlaces()
     {
-   return  ConsultationPlace::where('daira',"like","%{$this->daira}%")->get(['id', 'name']);
+
+  return ConsultationPlace::where('daira',$this->daira)->get(['id', 'name']);
+
     }
 
     #[Computed()]
@@ -49,6 +51,8 @@ class RendezvousModal extends Component
             $query->take(1);
         })->get(['id', 'name']);
         return $users;
+
+
     }
 
     #[Computed()]
@@ -56,9 +60,9 @@ public function planningDays()
 {
         $query = PlanningDay::query()
         ->whereHas('planning', function ($query) {
-            $query->where('state', 'publié');
+            $query->where('state', 'published');
         })
-        ->where('state','incomplet')
+        ->where('state','incomplete')
         ->where('doctor_id', $this->form->doctor_id);
         if($this->form->consultation_place_id !==""){
         $query->where('consultation_place_id', $this->form->consultation_place_id);
@@ -94,7 +98,7 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
     if(count($rendezvous) > 0) {
         $this->youHaveAlreadyAnUpcomingRendezVous = true;
         $this->dispatch('open-errors', [
-            "message" => "Vous avez déjà un rendez-vous à venir avec cette spécialité. Veuillez sélectionner une autre spécialité ou attendre votre rendez-vous."
+            "message" =>__('modals.rendez-vous.already-have-r-with-specialty')
         ]);
     } else {
         $this->youHaveAlreadyAnUpcomingRendezVous = false;
@@ -106,6 +110,8 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
 
     public function updated($property)
     {
+
+        $this->planningDaysOptions=[""=>"-- choisir une date --"];
      if($property ==="dateMin"){
       $this->manageTheRendezVousPeriodSelected();
      }
@@ -114,31 +120,33 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
          try{
             $this->temporaryImageUrl = $this->form->referral_letter->temporaryUrl();
          }catch (\Exception $e) {
-            $this->dispatch('open-errors', ["vous devez selection une image"]);
+            $this->dispatch('open-errors', [__('modals.rendez-vous.letter-type-error')]);
         }
        }
         if ($property === "form.specialty"){
             $this->checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty($this->medicalFileId,$this->form->specialty);
             $this->form->consultation_place_id="";
             $this->daira="";
-            $this->populateDoctorsOptions($this->doctors());
+            $this->doctorsOptions= $this->populateDoctorsOptions($this->doctors());
         }
         if ($property === "form.consultation_place_id"){
-           $this->populateDoctorsOptions($this->doctors());
+            $this->doctorsOptions =$this->populateDoctorsOptions($this->doctors());
         }
         if ($property === "daira"){
             $this->form->consultation_place_id="";
             $this->form->doctor_id="";
-            $this->populateDoctorsOptions($this->doctors());
-            $this->populateConsultationPlacesOptions($this->consultationsPlaces());
+            $this->doctorsOptions = $this->populateDoctorsOptions($this->doctors());
+            $this->consultationPlaceOptions =$this->populateConsultationPlacesOptions(
+                $this->consultationsPlaces()
+            );
         }
-
         if (in_array($property, ['form.doctor_id','daira','form.consultation_place_id', 'dateMin', 'dateMax']) ){
-
-            $this->planningDaysOptions = $this->populateSelectorOption(
+           $this->planningDaysOptions=  $this->populateSelectorOption(
                 $this->planningDays(),
-                fn($pd) => [$pd->id, $pd->day_at],
-                "choisir une date");
+                $this->planningDaysOptions,
+                "id",
+                "day_at"
+                );
         }
     }
 
@@ -159,14 +167,18 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
 
     public function mount()
     {
+
+
+        $this->doctorsOptions= [""=>"-- choisir un medecin --"];
+        $this->consultationPlaceOptions = [""=>"-- choisir un lieu de consultation --"];
+
         $this->manageTheRendezVousPeriodSelected();
         $this->form->fill([
             'type'=>"normal",
             'patient_id'=>$this->medicalFileId
         ]);
-        $this->populateDoctorsOptions($this->doctors());
-        $this->populateConsultationPlacesOptions(
-        $this->consultationsPlaces()
+        $this->doctorsOptions = $this->populateDoctorsOptions($this->doctors());
+        $this->consultationPlaceOptions= $this->populateConsultationPlacesOptions( $this->consultationsPlaces()
         );
     }
 

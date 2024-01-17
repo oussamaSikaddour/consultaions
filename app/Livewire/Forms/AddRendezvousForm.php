@@ -57,9 +57,9 @@ public function rules()
     public function messages(): array
     {
         return [
-            'consultation_place_id.required' => 'Vous devez sélectionner au moins un lieu de consultation',
-            'planning_day_id.required' => 'Vous devez sélectionner une date de rendez-vous.',
-            'planning_day_id.exists' => 'La journée de planification sélectionnée est invalide.',
+            'consultation_place_id.required' => __("forms.rendez-vous.c-place-required-err"),
+            'planning_day_id.required' =>__("forms.rendez-vous.planning-required-err"),
+            'planning_day_id.exists' => __("forms.rendez-vous.planning-exists-err"),
         ];
     }
 
@@ -69,8 +69,8 @@ public function rules()
                 return [
                     "planning_day_id"=>"planning",
                     "patient_id"=>"dossier médical",
-                    "referral_letter"=>"lettre d'orientation",
-                    "day_at"=>"date de contrôle"
+                    "referral_letter"=>__("modals.rendez-vous.letter"),
+                    "day_at"=>__("modals.rendez-vous.date")
                 ];
             }
 
@@ -82,7 +82,7 @@ public function rules()
                     DB::beginTransaction();
                     $medicalFile = MedicalFile::find($this->patient_id);
                     if (!$medicalFile) {
-                        throw new \Exception("aucun dossier médical valide trouvé");
+                        throw new \Exception(__("forms.rendez-vous.no-m-file"));
                     }
                     if ($this->type !== 'control') {
                         $planningDay = $this->planningDay;
@@ -97,7 +97,7 @@ public function rules()
                     $medicalFile->save();
                     $rendezVous = RendezVous::create($validatedData);
                     if (isset($this->referral_letter)) {
-                        $this->uploadAndCreateImage($this->referral_letter, $rendezVous->id, "App\Models\RendezVous", "lettre d'orientation");
+                        $this->uploadAndCreateImage($this->referral_letter, $rendezVous->id, "App\Models\RendezVous", "letter");
                     }
                     DB::commit();
                     return [
@@ -119,7 +119,7 @@ public function rules()
                 $numberOfConsultation = $planningDay->number_of_consultation;
 
                 if ($numberOfRendezVous >= $numberOfConsultation) {
-                    throw new \Exception("Le nombre maximum de rendez-vous pour cette journée a été atteint. Vous avez mis beaucoup de temps à valider votre choix, un autre patient vient de prendre le dernier rendez-vous");
+                    throw new \Exception(__("forms.rendez-vous.maxed-out"));
                 }
             }
 
@@ -128,7 +128,7 @@ public function rules()
                 $planningDay->number_of_rendez_vous += 1;
 
                 if ($planningDay->number_of_consultation == $planningDay->number_of_rendez_vous) {
-                    $planningDay->state = 'complet';
+                    $planningDay->state = 'complete';
                 }
 
                 $planningDay->save();

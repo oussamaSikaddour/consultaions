@@ -10,14 +10,9 @@ use Livewire\Form;
 
 class FirstForm extends Form
 {
-    public $last_name ='';
-    public $first_name ='';
-    public $birth_date ='';
+
     public $email ='';
-    public $tel ='';
-    public $userable_id ='1';
-    public $userable_type ='user';
-    public $password ="";
+
 
 
 
@@ -34,7 +29,7 @@ class FirstForm extends Form
     public function validationAttributes()
     {
         return [
-            'email' => 'email'
+            'email' =>__("forms.forget-pwd.first-f.email")
             // Add more attribute names as needed
         ];
     }
@@ -50,7 +45,7 @@ class FirstForm extends Form
                event(new EmailVerificationEvent($user));
                return [
                'status' => true,
-               'success' => 'Un code de vérification a été envoyé à votre adresse e-mail',
+               'success' => __("forms.forget-pwd.first-f.success-txt"),
                  ];
        } catch (\Exception $e) {
                 return [

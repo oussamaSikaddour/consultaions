@@ -59,12 +59,12 @@ class AddUserForm extends Form
     public function validationAttributes()
     {
         return [
-            'last_name' => 'Last Name',
-            'first_name' => 'First Name',
-            'birth_date' => 'Birth Date',
-            'email' => 'Email Address',
-            'tel' => 'Phone Number',
-            'specialty'=>'specialty'
+            'last_name' => __("modals.user.l-name"),
+            'first_name' => __("modals.user.f-name"),
+            'birth_date' => __("modals.user.b-date"),
+            'email' => __("modals.user.email"),
+            'tel' => __("modals.user.tel"),
+            'specialty'=>__("modals.user.specialty")
 
         ];
     }
@@ -121,7 +121,7 @@ class AddUserForm extends Form
 
                 return [
                     'status' => true,
-                    'success' => "L'utilisateur a été créé avec succès",
+                    'success' => __("forms.user.add.success-txt"),
                 ];
             });
         } catch (\Exception $e) {

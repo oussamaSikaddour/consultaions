@@ -20,12 +20,12 @@ class ChangePassword extends Component
     public function handelSubmit()
     {
         $response = $this->form->save();
-        if ($response['status'] === true) {
+        if ($response['status']) {
             // Redirect to the "logout" route by name
             $this->dispatch('redirect-page');
-            $this->dispatch('open-toast', $response['response']);
+            $this->dispatch('open-toast', $response['success']);
         } else {
-            $this->dispatch('open-errors', [$response['response']]);
+            $this->dispatch('open-errors', [$response['error']]);
         }
     }
 

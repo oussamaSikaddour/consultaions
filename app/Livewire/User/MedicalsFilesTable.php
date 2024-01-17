@@ -3,9 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\MedicalFile;
-use App\Traits\SortableTrait;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use App\Traits\TableTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -15,7 +13,7 @@ use Livewire\WithPagination;
 class MedicalsFilesTable extends Component
 {
 
-    use WithPagination, SortableTrait;
+    use WithPagination,TableTrait;
 
     // Properties with default values
     #[Url()]
@@ -34,38 +32,30 @@ class MedicalsFilesTable extends Component
     public $doctorId="";
 
 
+     public function resetFilters(){
+    $this->code="";
+    $this->firstName="";
+    $this->lastName="";
+    $this->birthDate="";
+    }
 
-
-
+    public function callUpdatedSelectedChoiceOnKeyDownEvent(){
+        $this->updatedSelectedChoice();
+     }
+    public function updatedSelectedChoice(){
+        $this->dispatch('set-medical-file-id-Externally', $this->selectedChoice);
+    }
 
 
     public function updated($property)
     {
         // $property: The name of the current property that was updated
 
-        if (($property === 'code' || $property==="lastName" ||
-             $property==="firstName" || $property==="birthDate") && count($this->medicalFiles())===0) {
-            $this->setSelectedChoiceAndDispatchEvent('unkonwn');
+        if ($property === 'code' || $property==="lastName" ||
+             $property==="firstName" || $property==="birthDate") {
+         $this->selectedChoice="empty";
+         $this->updatedSelectedChoice();
         }
-    }
-    public function selectFirstMedicalFile()
-    {
-        try {
-            if ($this->selectedChoice === null && $this->medicalFiles()->isNotEmpty()) {
-                $firstMF = $this->medicalFiles()[0];
-                if ($firstMF) {
-                    $this->setSelectedChoiceAndDispatchEvent($firstMF->id);
-                }
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('open-errors', [$e->getMessage()]);
-        }
-    }
-
-    public function setSelectedChoiceAndDispatchEvent($choice)
-    {
-        $this->selectedChoice = $choice;
-        $this->dispatch('set-medical-file-id-Externally', $this->selectedChoice);
     }
 
     #[Computed]
@@ -88,6 +78,7 @@ class MedicalsFilesTable extends Component
                 });
             });
         }
+
         $query->orderBy($this->sortBy, $this->sortDirection);
         return $query->get();
     }
@@ -104,10 +95,8 @@ class MedicalsFilesTable extends Component
         }
     }
 
-
-    public function mount()
-    {
-        $this->selectFirstMedicalFile();
+    public function mount(){
+        $this->selectedChoice="empty";
     }
 
     public function placeholder(){

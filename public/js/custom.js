@@ -1,49 +1,198 @@
-// document.addEventListener('livewire:initialized', () => {
-//     Livewire.on('refresh-page-after-timeout', () => {
-//         // Set a 30-second (30000 milliseconds) timeout before refreshing the page
-//         setTimeout(() => {
-//             location.reload(); // Refresh the page
-//         }, 30000);
-//     });
-// });
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                                               Nav
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+const bodyChildren = document.body.children;
 
 
+const focusNonHiddenInput = (form) => {
+ if (!form || !form.tagName || form.tagName.toLowerCase() !== 'form') {
+   return;
+ }
+ let currentInput = form.querySelector('input'); // Start with the first input
+ while (currentInput) {
+   const focusableLabel = currentInput.nextElementSibling?.matches('label[tabindex="0"]'); //
+   if (focusableLabel) {
+    currentInput.nextElementSibling.focus();
+     return;
+   } else if (!currentInput.matches('[style*="display: none"]') && !currentInput.hasAttribute('hidden')) {
+     currentInput.focus();
+     return;
+   } else {
+     currentInput = currentInput.nextElementSibling;
+   }
+ }
+};
 
-const navBtns = document.querySelectorAll(".nav__btn");
 
-const toggleNavVisibility = (btn, className) => {
-  const subItems = btn.nextElementSibling;
-  if (subItems) {
-    const expanded = btn.classList.contains(className);
-    btn.setAttribute("aria-expanded", expanded);
-    btn.setAttribute("aria-hidden", !expanded);
-    subItems.toggleAttribute("hidden", !expanded);
+
+
+const despatchCustomEvent= (eventName,data={})=>{
+const setLocaleEvent = new CustomEvent(eventName, {
+    detail: {
+        data
+    }
+});
+document.dispatchEvent(setLocaleEvent);
+}
+
+const handleKeyEvents = (event, index, keyFunctionHandler = null, htmlElementsArray, escapeFunction = null) => {
+  const { key } = event;
+  const currentIndex = index;
+  const lastIndex = htmlElementsArray.length - 1;
+
+  switch (key) {
+    case 'Escape':
+      if (escapeFunction) {
+        event.preventDefault();
+        escapeFunction();
+      }
+      break;
+    case 'Enter':
+    case ' ':
+      if (keyFunctionHandler) {
+        event.preventDefault();
+        keyFunctionHandler(index);
+      }
+      break;
+    case 'ArrowDown':
+      event.preventDefault();
+      if (currentIndex < lastIndex) {
+        htmlElementsArray[currentIndex + 1].focus();
+      }
+      break;
+    case 'ArrowUp':
+      event.preventDefault();
+      if (currentIndex > 0) {
+
+        htmlElementsArray[currentIndex - 1].focus();
+      }
+      break;
+    case 'Home':
+
+      htmlElementsArray[0].focus();
+      break;
+    case 'End':
+      htmlElementsArray[lastIndex].focus();
+      break;
+    default:
+      break;
   }
 };
 
-navBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    navBtns.forEach(b => {
-      if (b !== btn) {
-        b.classList.remove("clicked");
-        b.parentElement.classList.remove("clicked");
-        toggleNavVisibility(b, 'clicked');
+
+const  setAriaAttributes = (hidden, tabindex,element)=> {
+  element.setAttribute("aria-hidden", hidden);
+  element.setAttribute("tabindex", tabindex);
+}
+
+const toggleInert = (element, state = false) => {
+      if (state) {
+          element.setAttribute("inert", "");
+      } else {
+          element.removeAttribute("inert");
       }
-    });
-    btn.classList.toggle("clicked");
-    btn.parentElement.classList.toggle("clicked");
-    toggleNavVisibility(btn, "clicked");
+};
+
+const toggleInertWhenState = (element, className,invertState=false) => {
+    const hasClassName = element.classList.contains(className);
+    toggleInert(element, invertState ? !hasClassName : hasClassName);
+};
+
+const toggleInertForChildElement = (element, childElement, className, invertState = false) => {
+  const hasClassName = element.classList.contains(className);
+  toggleInert(childElement, invertState ? !hasClassName : hasClassName);
+};
+
+
+
+const toggleInertForAllExceptOpenedElement = (openedElement, className,invertState=false) => {
+  const elementState = openedElement.classList.contains(className);
+  [...bodyChildren].forEach((element) => {
+    if (element !== openedElement) {
+
+      if (invertState ? !elementState: elementState) {
+        element.setAttribute("inert", "");
+      } else {
+        element.removeAttribute("inert");
+      }
+    }
   });
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const loaderContainer = document.createElement('div');
+loaderContainer.className = 'loader__container';
+const loader = document.createElement('div');
+loader.className = 'loader l';
+const loaderCircle1 = document.createElement('div');
+loaderCircle1.className = 'loader__circle';
+const loaderCircle2 = document.createElement('div');
+loaderCircle2.className = 'loader__circle';
+loader.appendChild(loaderCircle1);
+loader.appendChild(loaderCircle2);
+
+loaderContainer.appendChild(loader);
+document.body.appendChild(loaderContainer);
+
+document.addEventListener('DOMContentLoaded', function() {
+  loaderContainer.classList.add('hide');
+
+  const currentForm= document.querySelector(".form");
+  if(currentForm){
+    focusNonHiddenInput(currentForm);
+  }
+
 });
 
 
 
-const HumBtn = document.querySelector(".nav__humb");
-const navPhone= document.querySelector(".nav--phone")
-HumBtn?.addEventListener('click', () => {
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////                                                                                 toolTip
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const buttonsWithTooltip = document.querySelectorAll(".hasToolTip");
+const showToolTip = (toolTip, parent) => {
+  toolTip.classList.add("show");
+  parent.setAttribute("aria-expanded", true);
+  toolTip.setAttribute("aria-hidden", false);
+};
+
+const hideToolTip = (toolTip, parent) => {
+  toolTip.classList.remove("show");
+  parent.setAttribute("aria-expanded", false);
+  toolTip.setAttribute("aria-hidden", true);
+};
+
+buttonsWithTooltip.forEach(button => {
+  const toolTip = button.querySelector(".toolTip");
+  if (toolTip) {
+    button.addEventListener('mouseover', () => {
+      showToolTip(toolTip, button);
+    });
+    button.addEventListener('mouseout', () => {
+      hideToolTip(toolTip, button);
+    });
+  }
+});
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////                                                                                 Nav
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const navButtons = Array.from(document.querySelectorAll(".nav__btn--dropdown"));
+  const HumBtn = document.querySelector(".nav__humb");
+  const navPhone= document.querySelector(".nav--phone")
+
+const dropDownMenus = document.querySelectorAll(".nav--phone .nav__item--dropDown")
+const toggleSubMenuPhoneInert = (dropDownMenu) => {
+  const menuItems= dropDownMenu.querySelector(".nav__items--sub")
+  toggleInertForChildElement(dropDownMenu,menuItems,"clicked",true)
+}
+
+  HumBtn?.addEventListener('click', () => {
     HumBtn.classList.toggle("open")
     navPhone.classList.toggle("open")
   if (navPhone) {
@@ -53,3 +202,180 @@ HumBtn?.addEventListener('click', () => {
     navPhone.toggleAttribute("hidden", !expanded);
   }
 });
+
+
+
+const toggleNavSubMenuVisibility = (navButton) => {
+  const subItems = navButton.nextElementSibling;
+  if (subItems) {
+    const isExpanded = navButton.classList.contains("clicked");
+    navButton.setAttribute("aria-expanded", isExpanded);
+    navButton.setAttribute("aria-hidden", !isExpanded);
+    navButton.toggleAttribute("hidden", !isExpanded);
+  }
+
+};
+
+const toggleNavButtonVisibility = (index) => {
+  const currentNavButton = navButtons[index];
+  navButtons.forEach((navButton, i) => {
+    if (navButton !== currentNavButton) {
+      navButton.classList.remove("clicked");
+      navButton.parentElement.classList.remove("clicked");
+    }else{
+    navButton.classList.toggle("clicked");
+    navButton.parentElement.classList.toggle("clicked");
+    }
+    toggleNavSubMenuVisibility(navButton);
+    toggleSubMenuPhoneInert( navButton.parentElement)
+  });
+};
+
+
+const quiteMenu = (index) => {
+ toggleNavButtonVisibility(index);
+  navButtons[index].focus()
+};
+
+const handleMenuItemKeyDown = (index) => {
+  const menu = navButtons[index].nextElementSibling;
+  const menuItems = Array.from(menu.querySelectorAll("[role='menuitem']"));
+  menuItems[0]?.focus();
+
+  menu.addEventListener('keydown', (event) => {
+    const pressedItem = event.target.closest('[role="menuitem"]');
+    const i = menuItems.indexOf(pressedItem);
+    handleKeyEvents(event, i, null, menuItems,()=>quiteMenu(index));
+  });
+};
+
+navButtons.forEach((navButton, index) => {
+  navButton.addEventListener('click', () => toggleNavButtonVisibility(index));
+  navButton.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      toggleNavButtonVisibility(index);
+    }
+    if (navButton.classList.contains("clicked")) {
+      handleMenuItemKeyDown(index);
+    }
+  });
+});
+
+
+dropDownMenus?.forEach(d=>toggleSubMenuPhoneInert(d))
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////                                                                                Lang
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const initialLanguages = [
+    { lang: 'En', flag: './img/en.png' },
+    { lang: 'Fr', flag: './img/fr.png' },
+    { lang: 'Ar', flag: './img/ar.png' },
+  ];
+const savedLanguage = localStorage.getItem('language') || 'Fr';
+const langMenuContainer = document.querySelector(".lang__menu__container");
+const langMenu = document.querySelector(".lang__menu");
+const langBtn = document.querySelector(".lang__btn");
+function setLanguagePreference(language) {
+  localStorage.setItem('language', language);
+  document.documentElement.classList.toggle('arabic', language === 'Ar');
+}
+const getIndexByLang = (languageCode) => initialLanguages.findIndex((language) => language.lang === languageCode);
+
+const toggleMenu = () => {
+  const isOpen = langMenu.classList.toggle("open");
+  langBtn.setAttribute("aria-expanded", isOpen);
+  langMenu.setAttribute("aria-hidden", !isOpen);
+};
+
+const populateLangMenu = (selectedLang) => {
+
+  const index = getIndexByLang(selectedLang);
+  langBtn.innerHTML = `
+    <div class="lang">
+      <p>${initialLanguages[index].lang}</p>
+      <img src="${initialLanguages[index].flag}" alt="${initialLanguages[index].lang} language" />
+    </div>
+  `;
+
+
+  const remainingLanguages = initialLanguages.filter((language) => language.lang !== selectedLang);
+  langMenu.innerHTML = remainingLanguages.map(  (language) => `
+    <li role="menuitem" class="lang__menu__item" tabindex="0">
+      <div class="lang">
+        <p>${language.lang}</p>
+        <img src="${language.flag}" alt="${language.lang} language" />
+      </div>
+    </li>
+  `).join("");
+ setLanguagePreference(selectedLang);
+};
+
+const handleLangBtnClick = () => {
+  toggleMenu();
+  const langMenuItems = Array.from(document.querySelectorAll('.lang__menu__item'));
+  langMenuItems[1]?.focus();
+};
+
+const selectLang = (index) => {
+  const langMenuItems = Array.from(document.querySelectorAll('.lang__menu__item'));
+  const selectedLang = langMenuItems[index]?.querySelector("p").textContent;
+  populateLangMenu(selectedLang);
+  toggleMenu();
+  langBtn.focus();
+  despatchCustomEvent('set-locale',{lang:selectedLang});
+};
+
+langMenuContainer?.addEventListener('keydown', (event) => {
+  const langMenuItem = event.target.closest('.lang__menu__item');
+  if (!langMenuItem) return;
+  const langMenuItems = Array.from(document.querySelectorAll('.lang__menu__item'));
+  const index = langMenuItems.indexOf(langMenuItem);
+  handleKeyEvents(event, index, selectLang, langMenuItems);
+});
+
+langMenuContainer?.addEventListener('click', (event) => {
+  const langMenuItem = event.target.closest('.lang__menu__item');
+  if (!langMenuItem) return;
+  const langMenuItems = Array.from(document.querySelectorAll('.lang__menu__item'));
+  const index = langMenuItems.indexOf(langMenuItem);
+  selectLang(index);
+});
+
+if (langBtn) {
+  populateLangMenu(savedLanguage);
+  langBtn.addEventListener('click', handleLangBtnClick);
+}
+setLanguagePreference(savedLanguage);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////                                                                                ToggleCheckBox
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const toggleCheckbox = (checkbox) => {
+
+    checkbox.checked = !checkbox.checked;
+    if (checkbox.getAttribute('aria-checked') === 'true') {
+      checkbox.setAttribute('aria-checked', 'false');
+    } else {
+      checkbox.setAttribute('aria-checked', 'true');
+    }
+  };
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////                                                                                RadioBtn
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const  checkRadio = (radio,radios=null) => {
+
+        radios?.forEach(radio => {
+        const radioInput = radio.querySelector("input[type='radio']");
+          radioInput.checked = false;
+          radioInput.setAttribute('aria-checked', 'false');
+        });
+        if (!radio.checked) {
+          radio.checked = true;
+      radio.setAttribute('aria-checked', 'true')
+     }
+    }
+

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('service_id');
             $table->unsignedBigInteger('created_by');
-            $table->enum('state', ['publié', 'non publié'])->default('non publié');
+            $table->enum('state', ['published', 'not_published'])->default('not_published');
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');

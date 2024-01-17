@@ -7,8 +7,6 @@ use Livewire\Component;
 class Forms extends Component
 {
 
-    public $isSlide = false;
-
 
     public function render()
     {

@@ -11,10 +11,15 @@ class MedicalFileModal extends Component
 {
 
 
+
+
     public AddMedicalFileForm $addForm;
     public UpdateMedicalFileForm $updateForm;
     public MedicalFile $medicalFile;
     public $id = "";
+
+
+
 
     public function mount()
     {

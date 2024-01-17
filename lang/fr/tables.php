@@ -1,0 +1,126 @@
+<?php
+return [
+     "common"=>[
+        "excel-file-type-err" => "Le fichier doit être au format Excel (XLSX, XLS, CSV)"
+     ],
+    'users'=> [
+        "fullName"=>"Nom",
+        "email"=>"Email",
+        "specialty"=>"Spécialité",
+        "registration-date"=>"Date d'inscription",
+        "phone"=>"Numéro de téléphone",
+        "filters"=>[
+            "specialty"=>"Spécialité :",
+            "user-type"=>"Rôle de l'utilisateur :"
+        ],
+        "not-found"=>"Aucun utilisateur trouvé pour le moment",
+
+    ],
+    'establishments'=> [
+        "empty-excel" => "Générer une feuille établissements excel vide",
+        "upload-excel-btn-txt"=>"Télécharger des Établissements",
+        "excel-upload-success-msg"=>"Établissements téléchargés avec succès",
+        "acronym"=>"Abréviation du Nom",
+        "name"=>"Nom",
+        "email"=>"Email",
+        "address"=>"Adresse",
+        "land-line-number"=>"Numéro de téléphone fixe",
+        "fax-number"=>"Numéro de fax",
+        "creation-date"=>"Date d'ajout",
+        "not-found"=>"Aucun établissement trouvé pour le moment",
+    ],
+    'services'=> [
+        "empty-excel" => "Générer une feuille services Excel vide ",
+        "upload-excel-btn-txt" => "Télécharger les services",
+        "excel-upload-success-msg" => "Services téléchargés avec succès",
+        "name"=>"Nom du Service",
+        "head-service"=>"Chef du Service",
+        "specialty"=>"Spécialité du Service",
+        "creation-date"=>"Date d'ajout",
+        "filters"=>[
+            "specialty"=>"Spécialité :",
+        ],
+        "not-found"=>"Aucun service trouvé pour le moment",
+    ],
+    "plannings" => [
+        "name" => "Nom du planning",
+        "year" => "Année",
+        "state" => "État",
+        "month" => "Mois",
+        "creation-date" => "Date d'ajout",
+        "filters" => [
+            "year" => "Année :",
+            "month" => "Mois :",
+            "state" => "État :",
+        ],
+        'already-published' => 'Déjà publié',
+        "not-found" => "Aucun planning trouvé pour le moment",
+    ],
+    "planning-days" => [
+        "date" => "La date",
+        "doctor" => "Médecin",
+        "c-place" => "Lieu des consultations",
+        "c-number" => "Nombre des consultations",
+        "creation-date" => "Date d'ajout",
+        "filters" => [
+            "specialty" => "Spécialité :",
+            "doctor" => "Médecin :",
+            "c-place" => "Lieu des consultations :",
+        ],
+        'already-published' => 'Déjà publié',
+        "not-found" => "Aucune journée de planning trouvée pour le moment",
+    ],
+    'c-places'=> [
+        "empty-excel" => "Générer une feuille Excel vide pour les lieux de consultations",
+        "upload-excel-btn-txt" => "Télécharger les lieux de consultations",
+        "excel-upload-success-msg" => "Lieux des consultations téléchargés avec succès",
+        "name"=>"Nom du Lieu des Consultations",
+        "address"=>"Adresse",
+        "land-line-number"=>"Numéro de téléphone fixe",
+        "fax-number"=>"Numéro de fax",
+        "filters"=>[
+            "daira"=>"Daïra",
+        ],
+        "creation-date"=>"Date d'ajout",
+        "not-found"=>"Aucun lieu des consultations trouvé pour le moment",
+    ],
+    'm-files'=> [
+        "code"=>"Code du Fichier",
+        "birth-d"=>"Date de Naissance",
+        "l-name" =>"Nom de Famille",
+        "f-name" =>"Prénom",
+        "phone-number"=>"Numéro de Téléphone",
+        "filters"=>[
+            "daira"=>"Daïra",
+        ],
+        "creation-date"=>"Date d'ajout",
+        "not-found"=>"Aucun dossier médical trouvé pour le moment",
+
+    ],
+    'rendez-vous'=> [
+        "mf-code"=>"Code du Fichier",
+        "date"=>"Date le",
+        'type' => 'Type',
+        "name"=>"Nom du patient",
+        "birth-d"=>"Date de naissance",
+        "start-d"=>"Date de début",
+        "end-d"=>"Date de fin",
+        "patient-l-name"=>"Nom de famille du patient",
+        "patient-f-name"=>"Prénom du patient",
+        "specialty"=>"Spécialité",
+        "doctor"=>"Médecin",
+        'd-email'=>"Email du médecin",
+        'd-phone'=>"Numéro de téléphone du médecin",
+        "establishment"=>"Établissement",
+        "c-place"=>"Lieu de consultation",
+        "filters"=>[
+            "doctor"=>"Médecin :",
+            "specialty"=>"Spécialité :",
+            "c-place"=>"Lieu de consultation :",
+            'type' => 'Type :',
+        ],
+        "not-found"=>"Aucun rendez-vous trouvé pour le moment",
+        'delete-err' => "Vous ne pouvez pas supprimer le rendez-vous. Il est prévu dans les 3 prochains jours.",
+    ],
+
+];

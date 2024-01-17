@@ -2,17 +2,18 @@
 
 namespace App\Livewire;
 
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Font;
+
 use App\Models\ConsultationPlace;
-use App\Models\Planning;
+use App\Models\Image;
+use App\Models\PlanningDay;
 use App\Models\RendezVous;
 use App\Models\User;
-use App\Traits\SortableTrait;
+use App\Traits\GeneralTrait;
+use App\Traits\TableTrait;
+use DateTime;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -23,13 +24,11 @@ use Mpdf\Mpdf;
 class RendezvousTable extends Component
 {
 
-    use WithPagination, SortableTrait;
+    use WithPagination, TableTrait,GeneralTrait;
     // Properties with default values
     public $serviceId = "";
     #[Url()]
     public $doctorId =null;
-    #[Url()]
-    public $code ="";
     #[Url()]
     public $dayAt= "";
     #[Url()]
@@ -41,25 +40,39 @@ class RendezvousTable extends Component
     #[Url()]
     public $birthDate="";
     #[Url()]
+    public $type="";
+    #[Url()]
     public $consultationPlaceId = "";
     public $medicalFileId = "";
     public $patient="";
     public $doctorsList=[];
     public $consultationPlacesList=[];
-    public $showMoreDetails=false;
-    public $dontShowForDoctor=false;
+    public $showForDoctor=false;
+    public $showForCPlaceAdmin=false;
     public $openedBy=null;
+
+
+
+    public function resetFilters(){
+        $this->dayAt="";
+        $this->dateMin="";
+        $this->dateMax="";
+        $this->type="";
+        $this->specialty="";
+        $this->birthDate="";
+        if(!$this->showForDoctor){
+         $this->doctorId=null;
+        }
+        if(!$this->showForCPlaceAdmin){
+         $this->consultationPlaceId="";
+        }
+        }
+
 
     public function updatedSpecialty()
     {
-              if(count($this->doctors()) > 0){
-               $this->doctorsList = $this->doctors->map(function ($doctor) {
-                return [$doctor->id, $doctor->name];
-                })->prepend(["", "-- choisir un medecin --"]);
-              }else{
-                $this->doctorsList =[["", "-- choisir un medecin --"]];
-             }
-        $this->updateFilterData('doctorId',$this->doctorsList);
+        $this->doctorsList = $this->populateDoctorsOptions($this->doctors());
+        $this->updateFilterData('doctorId', $this->doctorsList);
     }
 
     #[Computed()]
@@ -67,7 +80,7 @@ class RendezvousTable extends Component
     {
 
         $doctors= User::whereHas('occupations', function ($query) {
-            $query->where('entitled', 'doctor')->where('specialty', 'like', "%{$this->specialty}%");
+            $query->where('entitled', 'doctor')->where('specialty',$this->specialty);
         })->whereHas('occupations', function ($query) {
             // Only consider the first occupation
             $query->take(1);
@@ -102,7 +115,7 @@ public function rendezVous()
         ->leftJoin('users', 'rendez_vous.doctor_id', '=', 'users.id')
         ->leftJoin('occupations', 'users.id', '=', 'occupations.user_id')
         ->leftJoin('personnel_infos', 'users.id', '=', 'personnel_infos.user_id');
-        if($this->medicalFileId !==""){
+        if(!$this->showForDoctor || !$this->showForCPlaceAdmin){
             $query->where('patient_id', $this->medicalFileId);
         }
         if ($this->patient !=="") {
@@ -119,14 +132,19 @@ public function rendezVous()
         if ($this->specialty !== "") {
                 $query->where('rendez_vous.specialty', $this->specialty);
         }
+        if ($this->type !== "") {
+                $query->where('rendez_vous.type', $this->type);
+        }
         if($this->dayAt !==""){
             $query->where('rendez_vous.day_at', $this->dayAt);
         }
-        if ($this->dateMin !== "" && $this->dateMax !== "") {
-            $query->whereBetween('rendez_vous.day_at', [$this->dateMin, $this->dateMax]);
-        }elseif($this->dateMin !==""){
+
+        if($this->dateMin !==""){
                 $query->where('rendez_vous.day_at', '>=', $this->dateMin)
                       ->where('rendez_vous.day_at', '<=', date('Y-m-d', strtotime($this->dateMin . ' +30 days')));
+        }
+        if ($this->dateMin !== "" && $this->dateMax !== "") {
+            $query->whereBetween('rendez_vous.day_at', [$this->dateMin, $this->dateMax]);
         }
        if($this->doctorId){
         $query->whereHas('doctor', function ($query)  {
@@ -134,13 +152,11 @@ public function rendezVous()
         });
        }
        if($this->consultationPlaceId !==""){
-        $query->whereHas('planningDay', function ($query)  {
-            $query->where('consultation_place_id', $this->consultationPlaceId);
-        });
+         $query->where('consultation_place_id', $this->consultationPlaceId);
        }
 
 
-    if ($this->showMoreDetails) {
+    if ($this->showForCPlaceAdmin || $this->showForDoctor) {
         $query->select(
             'rendez_vous.*',
             'medical_files.code as code',
@@ -149,7 +165,6 @@ public function rendezVous()
             'medical_files.birth_date as patient_birth_date',
             'users.name as doctor_name',
             'users.email as doctor_email',
-            'personnel_infos.tel as doctor_phone',
             'establishments.name as establishment_name',
             'consultation_places.name as cp_name',
         );
@@ -159,6 +174,8 @@ public function rendezVous()
             'users.name as doctor_name',
             'establishments.name as establishment_name',
             'consultation_places.name as cp_name',
+            "consultation_places.latitude as cp_latitude",
+            "consultation_places.longitude as cp_longitude"
         );
     }
     $query->orderBy($this->sortBy, $this->sortDirection);
@@ -174,81 +191,41 @@ public function rendezVous()
 }
 
 
-    public function generateExcel()
-{
-    // Your data retrieval logic, e.g., $tableData
-    $tableData = $this->rendezVous()->map(function ($r) {
-        return [
-            "code patient"=>$r->code,
-            "nom patient"=>$r->patient_last_name,
-            "prénom patient"=>$r->patient_first_name,
-            "date de naissance" => $r->patient_birth_date,
-            "date rendez vous"=>$r->day_at,
-            "spécialité"=> $r->specialty,
-            "nom Médecin" => $r->doctor_name,
-            "email Médecin" =>$r->doctor_email,
-            "numéro médecin" => $r->doctor_phone,
-            "établissement" =>$r->establishment_name,
-            "lieu de consultation"=> $r->cp_name
-        ];
-    })->toArray();
 
-    try {
-        // Create a new spreadsheet
-        $spreadsheet = new Spreadsheet();
-        $activeWorksheet = $spreadsheet->getActiveSheet();
 
-        // Define styles for header row
-        $headerStyle = [
-            'font' => ['bold' => true],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'DDDDDD']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-        ];
 
-        // Add headers to the spreadsheet
-        $columnIndex = 'A';
-        foreach (array_keys($tableData[0]) as $header) {
-            $activeWorksheet->setCellValue($columnIndex . '1', $header);
-            $activeWorksheet->getStyle($columnIndex . '1')->applyFromArray($headerStyle);
-            $columnIndex++;
-        }
+public function generateRendezVousExcel(){
 
-        // Add data rows
-        $rowIndex = 2;
-        foreach ($tableData as $row) {
-            $columnIndex = 'A';
-            foreach ($row as $cellValue) {
-                $activeWorksheet->setCellValue($columnIndex . $rowIndex, $cellValue);
-                $columnIndex++;
-            }
-            $rowIndex++;
-        }
+    $rdFileName = $this->specialty ?: "mix-specialties";
 
-        // Send the spreadsheet as a downloadable file
-        $writer = new Xlsx($spreadsheet);
+    $rdFileName = $rdFileName . "-" . now()->format('Y-m-d'); // Format includes year, month, and day
 
-        return response()->stream(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
-            200,
-            [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="rendezvous.xlsx"',
-            ]
-        );
-    } catch (\Exception $e) {
-        // Handle errors and return an appropriate response
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
+    return $this->generateExcel(function() {
+        return $this->rendezVous()->map(function ($r) {
+            return [
+                __('tables.rendez-vous.mf-code')=>$r->code,
+                __('tables.rendez-vous.patient-l-name')=>$r->patient_last_name,
+                __('tables.rendez-vous.patient-l-name')=>$r->patient_first_name,
+               __('tables.rendez-vous.birth-d') => $r->patient_birth_date,
+                __('tables.rendez-vous.date')=>$r->day_at,
+                __('tables.rendez-vous.type')=> app('my_constants')['RENDEZ_VOUS_TYPE'][app()->getLocale()][$r->type],
+                 __('tables.rendez-vous.specialty')=>
+                                                   app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()][$r->specialty],
+               __('tables.rendez-vous.doctor')=> $r->doctor_name,
+                __('tables.rendez-vous.d-email') =>$r->doctor_email,
+                __('tables.rendez-vous.establishment') =>$r->establishment_name,
+                __('tables.rendez-vous.c-place')=> $r->cp_name
+            ];
+        })->toArray();
+    }, $rdFileName);
 }
 
 
 public function printConfirmationPdf($rendezVousData)
 {
-    try {
+   try {
         $mpdf = new Mpdf();
-        $html = view("pdfs.rendez-vous", compact('rendezVousData'))->render();
+        $html = view("pdfs.".app()->getLocale() .".rendez-vous", compact('rendezVousData'))->render();
         $mpdf->WriteHTML($html);
         $tempDir = storage_path('app/temp/');
         if (!File::isDirectory($tempDir)) {
@@ -262,37 +239,75 @@ public function printConfirmationPdf($rendezVousData)
         $this->dispatch('open-errors', [$e->getMessage()]);
     }
 }
-    #[On("delete-rendezvous")]
+    #[On("delete-rendez-vous")]
     public function deleteRendezVous(RendezVous $rd)
     {
         try {
-            $rd->delete();
+            DB::beginTransaction();
+            $planningDay = PlanningDay::findOrFail($rd->planning_day_id);
+            $today = new DateTime();
+            $futureDate = new DateTime($planningDay->day_at);
+            $futureDate->modify('-3 days');
+            if ( $today <= $futureDate) {
+                if ($rd->type === 'normal') {
+                    $planningDay->number_of_rendez_vous -= 1;
+                    if ($planningDay->number_of_consultation > $planningDay->number_of_rendez_vous) {
+                        $planningDay->state = 'incomplete';
+                        $planningDay->save();
+                    }
+                }
+                Image::where('imageable_id', $rd->id)
+                ->where('imageable_type', 'App\Models\RendezVous')
+                ->each(function ($image) {
+                    Storage::disk('public')->delete($image->path);
+                    $image->delete();
+                });
+                $rd->delete();
+            } else {
+                throw new \Exception(__("tables.rendez-vous.delete-err"));
+            }
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack(); // Roll back the transaction if an error occurs
             $this->dispatch('open-errors', [$e->getMessage()]);
         }
     }
 
-
     public function mount()
     {
-        if($this->showMoreDetails){
+
+        if($this->showForDoctor || $this->showForCPlaceAdmin){
             $this->dayAt= now()->toDateString();
            }
-        if($this->dontShowForDoctor === false){
-            if(count($this->doctors()) > 0){
-                $this->doctorsList = $this->doctors->map(function ($doctor) {
-                    return [$doctor->id, $doctor->name];
-                })->prepend(["", "-- choisir un medecin --"]);
-         }
 
-         $this->initializeFilter('specialty', 'spécialité de service', app('my_constants')['SPECIALTY_OPTIONS']);
-         $this->initializeFilter('doctorId', 'medecin', $this->doctorsList);
-        }
-        if(count($this->consultationsPlaces()) >0){
-        $this->consultationPlacesList = $this->consultationsPlaces->map(function ($cp) {
-            return [$cp->id, $cp->name];
-        })->prepend(["", "-- choisir un lieu de consultation --"]);
-        $this->initializeFilter('consultationPlaceId', 'lieu de consultation',  $this->consultationPlacesList);}
+
+           $this->initializeFilter(
+            'type',
+             __('tables.rendez-vous.filters.type'),
+            app('my_constants')['RENDEZ_VOUS_TYPE'][app()->getLocale()]);
+
+
+           if(!$this->showForCPlaceAdmin){
+          $this->consultationPlacesList= $this->populateConsultationPlacesOptions($this->consultationsPlaces());
+          $this->initializeFilter(
+            'consultationPlaceId',
+            __('tables.rendez-vous.filters.c-place'),
+            $this->consultationPlacesList);
+          }
+
+         $this->initializeFilter(
+          'specialty',
+         __('tables.rendez-vous.filters.specialty'),
+          app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()]);
+
+            if(!$this->showForDoctor){
+                $this->doctorsList = $this->populateDoctorsOptions($this->doctors());
+             $this->initializeFilter(
+                        'doctorId',
+                        __('tables.rendez-vous.filters.doctor'),
+                      $this->doctorsList);
+
+            }
         }
     public function placeholder(){
 

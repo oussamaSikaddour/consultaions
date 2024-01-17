@@ -50,11 +50,12 @@ class UpdateUserForm extends Form
     public function validationAttributes()
     {
         return [
-            'last_name' => 'nom',
-            'first_name' => 'prénom',
-            'birth_date' => 'date de naissance',
-            'tel' => 'numéro de téléphone',
-            'specialty'=> 'spécialité'
+            'last_name' => __("modals.user.l-name"),
+            'first_name' => __("modals.user.f-name"),
+            'birth_date' => __("modals.user.b-date"),
+            'tel' => __("modals.user.tel"),
+            'specialty'=>__("modals.user.specialty")
+
         ];
     }
 
@@ -87,7 +88,7 @@ class UpdateUserForm extends Form
             }
         return [
             'status' => true,
-            'success' => "L'utilisateur a été mis à jour avec succès",
+            'success' =>__("forms.user.update.success-txt"),
         ];
     } catch (\Exception $e) {
         return [

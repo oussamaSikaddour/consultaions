@@ -99,29 +99,47 @@ class User extends Authenticatable
     //  $query->where('name','like',"%{$value}%")
     //         ->orWhere('email','like',"%{$value}%");
     // }
-    public function getRouteBasedOnUserableType(): array
+    public function getRouteBasedOnUserableType()
     {
         switch ($this->userable_type) {
             case UserableTypesEnum::USER_TYPE:
-                return [RoutesNamesEnum::USER_ROUTE, []];
+                return RoutesNamesEnum::USER_ROUTE;
 
             case UserableTypesEnum::ADMIN_TYPE:
-                return [RoutesNamesEnum::ADMIN_ROUTE, []];
+                return RoutesNamesEnum::ADMIN_ROUTE;
+
             case UserableTypesEnum::SERVICE_TYPE:
-                return [RoutesNamesEnum::SERVICE_ROUTE, ['id' => $this->userable_id]];
+
+                    // Find the associated service using userable_id
+                $service = Service::with('establishment')->where('id',$this->userable_id)->first();
+                        if ($service) {
+                        // Retrieve information about the establishment associated with the service
+                           $establishment = $service->establishment;
+                           if ($establishment) {
+                            // Set a session key 'establishment_id' with the establishment's ID
+                               session(['establishment_id' => $establishment->id]);
+                            }
+                         }
+
+                session(['service_id' => $this->userable_id]);
+                return RoutesNamesEnum::SERVICE_ROUTE;
 
             case UserableTypesEnum::ESTABLISHMENT_TYPE:
-                return [RoutesNamesEnum::ESTABLISHMENT_ROUTE, ['id' => $this->userable_id]];
+                session(['establishment_id' => $this->userable_id]);
+                return RoutesNamesEnum::ESTABLISHMENT_ROUTE;
 
             case UserableTypesEnum::PLACE_OF_CONSULTATION_TYPE:
-                return [RoutesNamesEnum::PLACE_Of_CONSULTATION_ROUTE, ['id' => $this->userable_id]];
+                session(['consultation_place_id' => $this->userable_id]);
+                return RoutesNamesEnum::PLACE_Of_CONSULTATION_ROUTE;
 
             case UserableTypesEnum::DOCTOR_TYPE:
-                return [RoutesNamesEnum::DOCTOR_ROUTE, []];
+                return RoutesNamesEnum::DOCTOR_ROUTE;
 
             default:
                 // Handle any other userable types or provide a default route name.
-                return ['noAccess', []];
+                return 'noAccess';
         }
     }
+
+
 }

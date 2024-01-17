@@ -5,7 +5,7 @@
     <div>
 
         <livewire:open-modal-button
-        title="Ajouter Un administrateur"
+        :title="__('pages.users.add-super-admin-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-users'></i>"
         :data="$modalData"

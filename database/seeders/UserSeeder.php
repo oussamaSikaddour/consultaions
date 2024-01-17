@@ -31,6 +31,7 @@ class UserSeeder extends Seeder
             'userable_type' => 'admin',
         ]);
         $user->roles()->attach(Role::where('slug', 'admin')->first());
+        $user->roles()->attach(Role::where('slug', 'super_admin')->first());
         PersonnelInfo::create(["user_id"=>$user->id]);
         // User::factory()
         //     ->count(30)

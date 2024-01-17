@@ -1,17 +1,42 @@
 
-<div class="table__container"  x-on:update-establishments-table.window="$wire.$refresh()">
+<div class="table__container"
+x-on:update-establishments-table.window="$wire.$refresh()"
+x-on:init="manageEstablishmentsRadioButtonsWihtKeydowEvents()"
+>
     <div class="table__header">
 
         <div>
             {{-- <button class="button button--primary rounded table__button" ><i class="fa-solid fa-file-excel"></i></button> --}}
+            <button class="button button--primary" wire:click="generateEmptyEstablishmentsSheet()">
+            @lang("tables.establishments.empty-excel")
+            </button>
+
+            <x-upload-input
+            model="excelFile"
+            :label="__('tables.establishments.upload-excel-btn-txt')"
+            />
         </div>
         <div>
-            <x-input name="acronym" label="abréviation du nom"  type="text" html_id="establishmenAcronym" role="filter"/>
-            <x-input name="name" label="nom"  type="text" html_id="establishmentName" role="filter"/>
+            <x-input name="acronym"
+            :label="__('tables.establishments.acronym')"
+            type="text"
+            html_id="establishmenAcronym"
+            role="filter"/>
+            <x-input
+             name="name"
+             :label="__('tables.establishments.name')"
+             type="text"
+             html_id="establishmentName"
+             role="filter"/>
 
         </div>
         <div>
-            <x-input name="email" label="email"  type="text" html_id="establishmentEmail" role="filter"/>
+            <x-input
+              name="email"
+              :label="__('tables.establishments.email')"
+              type="text"
+              html_id="establishmentEmail"
+               role="filter"/>
         </div>
         <div class="table__filters">
 
@@ -22,6 +47,7 @@
                      :name="$filter['name']"
                      :label="$filter['label']"
                      :data="$filter['data']"
+                     :toTranslate="$filter['toTranslate']"
                      type="filter"
                      />
 
@@ -29,23 +55,44 @@
         @endif
 
         </div>
+        <div>
+            <button class="button button--primary rounded" wire:click="resetFilters">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
     </div>
 
     @if(isset($this->establishments) && $this->establishments->isNotEmpty())
 
 
-
+    <div class="table__body">
     <table>
         <thead>
             <tr>
            <th></th>
-           <x-sortable-th wire:key="E-TH-1" name="acronym" label="abréviation du nom" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="E-TH-2" name="name" label="Nom"   :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="E-TH-3" name="email" label="Email" :$sortDirection :$sortBy/>
-             <th scope="column"><div>Adresse</div></th>
-             <th scope="column"><div>numéro du fix</div></th>
-             <th scope="column"><div>numéro du fax</div></th>
-            <x-sortable-th wire:key="E-TH-4" name="created_at" label="date de creation" :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="E-TH-1"
+           name="acronym"
+           :label="__('tables.establishments.acronym')"
+           :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="E-TH-2"
+           name="name"
+           :label="__('tables.establishments.name')"
+            :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="E-TH-3"
+           name="email"
+            :label="__('tables.establishments.email')"
+            :$sortDirection :$sortBy/>
+             <th scope="column"><div>@lang('tables.establishments.address')</div></th>
+             <th scope="column"><div>@lang('tables.establishments.land-line-number')</div></th>
+             <th scope="column"><div>@lang('tables.establishments.fax-number')</div></th>
+            <x-sortable-th
+            wire:key="E-TH-4"
+             name="created_at"
+             :label="__('tables.establishments.creation-date')"
+             :$sortDirection :$sortBy/>
              <th scope="column"><div>actions</div></th>
             </tr>
         </thead>
@@ -59,7 +106,6 @@
                           htmlId="{{ 'e-id'.$e->id }}"
                           value="{{ $e->id }}"
                           type="forTable"
-                          event="set-userable-id-Externally"
                           wire:key="{{ 'e-key-'.$e->id }}"
                         />
                     </td>
@@ -74,8 +120,8 @@
                         <livewire:open-dialog-button wire:key="'o-d-e-'.{{ $e->id }}" classes="rounded"
                             content="<i class='fa-solid fa-trash'></i>"
                             :data='[
-                                     "question" => "supprimer l établissement",
-                                     "details" =>"Are you sure you want to delete  $e->name ?",
+                                     "question" => "dialogs.title.establishment",
+                                     "details" =>["establishment",$e->name],
                                      "actionEvent"=>[
                                                      "event"=>"delete-establishment",
                                                      "parameters"=>$e
@@ -85,7 +131,7 @@
                         <livewire:open-modal-button  wire:key="o-p-m-{{ $e->id }}" classes="rounded"
                             content="<i class='fa-solid fa-pen-to-square'></i>"
                             :data='[
-                                  "title" => "modifier establishement",
+                                  "title" => "modals.establishment.for.update",
                                   "component" => [
                                                  "name" => "admin.establishment-modal",   "parameters" => ["id" => $e->id]
                                                  ]
@@ -95,7 +141,7 @@
                             content="<i class='fa-solid fa-users'></i>"
                             :data='[
 
-                                "title" => "ajour User",
+                                "title" => "modals.user.for.add-admin-establishment",
                                  "component" => [
                                                 "name" => "user-modal",
                                                 "parameters" => [
@@ -109,7 +155,7 @@
         </tbody>
 
     </table>
-
+    </div>
     <div class="table__footer">
         {{-- {{ $this->establishments->links() }} --}}
 
@@ -117,9 +163,30 @@
     @else
     <div class="table__footer">
     <h2>
-        Aucun établissement n'a été ajouté pour le moment.
+        @lang('tables.establishments.not-found')
     </h2>
     </div>
    @endif
 
 </div>
+
+@script
+<script>
+function manageEstablishmentsRadioButtonsWihtKeydowEvents() {
+  const radioButtons = document.querySelectorAll('.radio__button');
+
+  // Consolidated event listener for all radio buttons:
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && e.target.closest('.radio__button')) {
+      e.preventDefault();
+
+      const radioButton = e.target.closest('.radio__button');
+      const radioInput = radioButton.querySelector("input[type='radio']");
+      checkRadio(radioInput, radioButtons);
+      @this.selectedChoice= radioInput.value;
+      @this.callUpdatedSelectedChoiceOnKeyDownEvent();
+    }
+  });
+}
+</script>
+@endscript

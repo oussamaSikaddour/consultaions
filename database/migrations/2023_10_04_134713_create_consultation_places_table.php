@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('tel');
-            $table->string('fax');
-            $table->string('daira')->nullable();
+            $table->string('fax')->nullable();  // Added nullable() for fax
+            $table->string('latitude')->nullable(); // Added for latitude
+            $table->string('longitude')->nullable(); // Added for longitude
+            $table->string('daira');
             $table->softDeletes();
             $table->timestamps();
         });

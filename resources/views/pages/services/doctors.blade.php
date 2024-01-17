@@ -5,7 +5,7 @@
     <div>
 
         <livewire:open-modal-button
-        title="Ajouter Un medecin"
+        :title="__('pages.doctors.add-d-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-users'></i>"
         :data="$modalData"
@@ -15,7 +15,7 @@
 
      <livewire:users-table
       lazy
-      noUserFoundMessage="Aucun médecin trouvé pour le moment"
+      :customNoUserFoundMessage="__('pages.doctors.no-d-found-txt')"
       userableType="doctor"
       :showForAdminService="true"
       :userableId="$establishmentId"

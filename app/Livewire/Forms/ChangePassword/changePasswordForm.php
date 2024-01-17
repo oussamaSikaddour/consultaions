@@ -29,8 +29,8 @@ class changePasswordForm extends Form
     {
         return [
 
-            'password' => 'ancien mot de passe',
-            'newPassword' => 'nouveau mot de passe',
+            'password' => __("forms.change-pwd.pwd"),
+            'newPassword' =>__("forms.change-pwd.new-pwd")
             // Add more attribute names as needed
         ];
     }
@@ -38,32 +38,33 @@ class changePasswordForm extends Form
 
 
 
+
+
+
     public function save()
     {
         $data = $this->validate();
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        $isPasswordCorrect = Auth::attempt(['email' => $user->email, 'password' => $data['password']]);
+            $isPasswordCorrect = Auth::attempt(['email' => $user->email, 'password' => $data['password']]);
 
-        if($isPasswordCorrect){
+            if(!$isPasswordCorrect){
+                throw new \Exception(__("forms.change-pwd.pwd-err"));
+            }
 
             $user["password"] = Hash::make($data['newPassword']);
             $user->update();
-            $response = [
-                'status' => $isPasswordCorrect,
-                'response' => 'votre mot de passe a été changé. Vous serez maintenant déconnecté.',
+            return [
+                'status' => true,
+                'success' =>__("forms.change-pwd.success-txt"),
             ];
-
-        }else{
-            $response = [
-                'status' => $isPasswordCorrect,
-                'response' => 'Le mot de passe est incorrect',
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'error' => $e->getMessage(),
             ];
         }
-
-
-        return $response;
     }
-
 
 }

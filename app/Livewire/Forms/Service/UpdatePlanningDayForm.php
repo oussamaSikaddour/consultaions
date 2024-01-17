@@ -27,10 +27,10 @@ class UpdatePlanningDayForm extends Form
  public function validationAttributes()
     {
                 return [
-                    'day_at' => 'Date de consultation',
-                    'planning' => 'Planning',
-                    'consultation_place_id' => 'Lieu de la consultation',
-                    'number_of_consultation' => 'Nombre maximum de rendez-vous',
+                    'day_at' => __("modals.planning-day.date"),
+                    'planning' => 'planning',
+                    'consultation_place_id' =>__("modals.planning-day.c-place"),
+                    'number_of_consultation' =>__("modals.planning-day.c-number"),
                 ];
     }
 
@@ -42,7 +42,7 @@ class UpdatePlanningDayForm extends Form
             $planningDay->update($validatedData);
             return [
                 'status' => true,
-                'success' => 'Le jour de planification a été mis à jour avec succès',
+                'success' => __('forms.planning-day.update.success-txt'),
             ];
         } catch (\Exception $e) {
             return [

@@ -1,23 +1,34 @@
 @php
-    $specialtyOptionsData = app('my_constants')['SPECIALTY_OPTIONS'];
-    $dairasOptionsData = app('my_constants')['DAIRAS'];
+    $specialtyOptionsData = app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()];
+    $dairasOptionsData = app('my_constants')['DAIRAS'][app()->getLocale()];
 @endphp
 <div class="form__container">
 <form class="form" wire:submit.prevent="handleSubmit">
 
-        <h2>Pour afficher la liste des rendez-vous disponibles :</h2>
-        <h3>1. Choisissez une spécialité médicale.</h3>
-        <h3>2. sélectionner au moins une daïra et un lieu de consultation</h3>
-        <h3>3. Sélectionnez au moins un médecin.</h3>
+    @if ( $this->form->specialty !=""
+          && $this->daira !=""
+          && $this->form->consultation_place_id !=""
+          &&   count($this->doctors()) === 0)
+    <h2 >@lang('modals.rendez-vous.no-c-place-or-no-doctor').</h2>
 
-
-
-
+    @elseif (
+    count(
+        $this->planningDays()) === 0 &&
+         $this->form->doctor_id)
+    <div>
+       <h2>@lang("modals.rendez-vous.not-found")</h2>
+    </div>
+   @else
+        <h2>@lang('modals.rendez-vous.intro') :</h2>
+        <h3>1. @lang('modals.rendez-vous.first-instruction').</h3>
+        <h3>2. @lang('modals.rendez-vous.second-instruction')</h3>
+        <h3>3. @lang('modals.rendez-vous.third-instruction')</h3>
+    @endif
         <div>
             <x-selector
                 htmlId="rd-specialty"
                 name="form.specialty"
-                label="spécialité"
+               :label="__('modals.rendez-vous.specialty')"
                 :data="$specialtyOptionsData"
                 type="filter"
             />
@@ -26,14 +37,14 @@
             <x-selector
             htmlId="mcpd-diara"
             name="daira"
-            label="Daïra :"
+            :label="__('modals.rendez-vous.daira')"
             :data="$dairasOptionsData"
             type="filter"
             />
             <x-selector
                 htmlId="rd-lc"
                 name="form.consultation_place_id"
-                label="Lieu de consultation"
+                :label="__('modals.rendez-vous.c-place')"
                 :data="$consultationPlaceOptions"
                 type="filter"
                 showError="true"
@@ -44,17 +55,17 @@
             <x-selector
             htmlId="rd-doctor"
             name="form.doctor_id"
-            label="médecin"
+            :label="__('modals.rendez-vous.doctor')"
             :data="$doctorsOptions"
             type="filter"
         />
         </div>
 
-        <div><h3>Vous pouvez changer la période comme vous convient :</h3></div>
+        <div><h3>@lang('modals.rendez-vous.fourth-instruction')</h3></div>
         <div>
             <x-input
                 name="dateMin"
-                label="Date début"
+                :label="__('modals.rendez-vous.start-d')"
                 type="date"
                 html_id="pdDateMin"
                 :min="$dateMin"
@@ -62,48 +73,50 @@
             />
             <x-input
                 name="dateMax"
-                label="Date Fin"
+                :label="__('modals.rendez-vous.end-d')"
                 type="date"
                 html_id="pdDateMax"
                 :max="$dateMax"
                 role="filter"
             />
         </div>
-         @if(count($planningDaysOptions) >1)
-              <h3>Veuillez noter que la lettre d'orientation est requise en format photo</h3>
+         @if(count($this->planningDays())>0)
+              <h3>@lang('modals.rendez-vous.fifth-instruction')</h3>
                <div>
                      <x-selector
                        htmlId="rd-planningDay"
                        name="form.planning_day_id"
-                       label="date de rendez-vous :"
+                       :label="__('modals.rendez-vous.date')"
                        :data="$planningDaysOptions"
                       :showError="true"
                    />
-                <x-upload-input model="form.referral_letter" label="La lettre d'orientation."/>
+                <x-upload-input
+                model="form.referral_letter"
+               :label="__('modals.rendez-vous.letter')"
+                />
               </div>
               @if ($temporaryImageUrl)
                <div>
                 <div class="imgs__container">
-                  <h2>La lettre d'orientation</h2>
+                  <h2>@lang('modals.rendez-vous.letter') :</h2>
                    <div class="imgs">
                      <img class="img" src="{{ $temporaryImageUrl}}"
-                       alt="La lettre d'orientation.">
+                       alt=@lang('modals.rendez-vous.letter')>
                     </div>
                   </div>
                 </div>
               @endif
-         @elseif ($this->form->consultation_place_id && $this->form->doctor_id !=null)
-         <div>
-            <h3>il n'y a pas de rendez-vous disponible pour le moment</h3>
-         </div>
-         @endIf
-         @if(!$youHaveAlreadyAnUpcomingRendezVous)
-        <div class="form__actions">
-            <div wire:loading>
+         @endif
+         @if(!$youHaveAlreadyAnUpcomingRendezVous && count($this->doctors()) > 0 && count($this->planningDays()) > 0)
+
+            <div class="form__actions">
+               <div wire:loading>
                 <x-loading />
-            </div>
-            <button type="submit" class="button button--primary">Valider</button>
-        </div>
+                 </div>
+                 <button type="submit" class="button button--primary">@lang("modals.common.submit-btn")</button>
+              </div>
         @endif
+
+
     </form>
 </div>

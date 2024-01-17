@@ -1,6 +1,10 @@
 @extends('layouts.guestLayout')
 @section('pageContent')
 <section class="section">
-    <h2>maintenance mode</h2>
+    <div>
+
+        <h2>@lang('pages.maintenance-mode.main-title')</h2>
+    </div>
+
 </section>
 @endsection

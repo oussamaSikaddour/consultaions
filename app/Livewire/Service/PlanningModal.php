@@ -36,6 +36,9 @@ class PlanningModal extends Component
                 $this->dispatch('open-errors', [$e->getMessage()]);
             }
         }else{
+
+            $this->addForm->year = date('Y');
+            $this->addForm->month = date('n');
             $this->addForm->service_id= $this->serviceId;
         }
     }

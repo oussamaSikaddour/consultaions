@@ -17,7 +17,9 @@ class ConsultationPlace extends Model
         "address",
         "tel",
         "fax",
-        "daira"
+        "daira",
+        'longitude',
+        'latitude'
 
     ];
 

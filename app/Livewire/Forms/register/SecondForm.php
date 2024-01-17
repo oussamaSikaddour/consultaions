@@ -26,8 +26,8 @@ class SecondForm extends Form
     {
         return [
 
-            'email' => 'email',
-            'code' => 'code de vérification',
+            'email' => __("forms.register.second-f.email"),
+            'code' => __("forms.register.second-f.code")
             // Add more attribute names as needed
         ];
     }
@@ -50,16 +50,16 @@ class SecondForm extends Form
                     // Authenticate the user
                    Auth::login($user);
                    // Get the route information based on the user's type
-                   $routeInfo = $user->getRouteBasedOnUserableType();
+                   $route = $user->getRouteBasedOnUserableType();
                    return [
                     'status' => true,
-                    'data' =>  $routeInfo ,
+                    'data' =>  $route ,
                      ];
                   } else {
                  // If the OTP validation fails, create an error message
                    return [
                      'status' => false,
-                     'error' => "Le code de vérification n'est pas valide",
+                     'error' => __("forms.register.second-f.code-err")
                       ];
                  }
         } catch (\Exception $e) {

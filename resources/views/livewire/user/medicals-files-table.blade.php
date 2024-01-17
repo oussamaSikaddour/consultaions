@@ -4,6 +4,7 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
 @endphp
 <div class="table__container"
  x-on:update-medical-files-table.window="$wire.$refresh()"
+ x-on:init="manageMFilesRadioButtonsWihtKeydowEvents()"
  >
     <div class="table__header">
         <div>
@@ -11,12 +12,32 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                 <i class="fa-solid fa-file-excel"></i></button> --}}
         </div>
         <div>
-            <x-input name="code" label="code dossier"  type="text" html_id="codeMFT" role="filter"/>
-            <x-input name="birthDate" label="date de naissance"  type="date" html_id="bdMFT" role="filter"/>
+            <x-input
+            name="code"
+           :label="__('tables.m-files.code')"
+            type="text"
+            html_id="codeMFT"
+            role="filter"/>
+            <x-input
+            name="birthDate"
+            :label="__('tables.m-files.birth-d')"
+            type="date"
+            html_id="bdMFT"
+            role="filter"/>
         </div>
         <div>
-            <x-input name="lastName" label="nom"  type="text" html_id="LNameMFT" role="filter"/>
-            <x-input name="firstName" label="prénom "  type="text" html_id="FNameMFT" role="filter"/>
+            <x-input
+            name="lastName"
+            :label="__('tables.m-files.l-name')"
+            type="text"
+            html_id="LNameMFT"
+            role="filter"/>
+            <x-input
+            name="firstName"
+           :label="__('tables.m-files.f-name')"
+            type="text"
+             html_id="FNameMFT"
+              role="filter"/>
         </div>
         <div class="table__filters">
             @if(isset($filters) && is_array($filters) && count($filters) > 0)
@@ -26,24 +47,55 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                      :name="$filter['name']"
                      :label="$filter['label']"
                      :data="$filter['data']"
+                     :toTranslate="$filter['toTranslate']"
                      type="filter"
                      />
 
             @endforeach
         @endif
         </div>
+        <div>
+            <button class="button button--primary rounded" wire:click="resetFilters">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
     </div>
     @if(isset($this->medicalFiles) && $this->medicalFiles->isNotEmpty())
+    <div class="table__body">
       <table>
           <thead>
              <tr>
                 <th></th>
-             <x-sortable-th wire:key="mft-TH-1" name="code" label="Code Dossier"   :$sortDirection :$sortBy/>
-             <x-sortable-th wire:key="mft-TH-2" name="last_name" label="Nom"   :$sortDirection :$sortBy/>
-             <x-sortable-th wire:key="mft-TH-3" name="first_name" label="Prénom"   :$sortDirection :$sortBy/>
-             <x-sortable-th wire:key="mft-TH-4" name="birth_date" label="Date de naissance"   :$sortDirection :$sortBy/>
-             <x-sortable-th wire:key="mft-TH-5" name="tel" label="Numéro de téléphone"   :$sortDirection :$sortBy/>
-             <x-sortable-th wire:key="pdt-TH-6" name="created_at" label="date de creation" :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="mft-TH-1"
+              name="code"
+              :label="__('tables.m-files.code')"
+               :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="mft-TH-2"
+             name="last_name"
+              :label="__('tables.m-files.l-name')"
+              :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="mft-TH-3"
+             name="first_name"
+             :label="__('tables.m-files.f-name')"
+             :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="mft-TH-4"
+             name="birth_date"
+             :label="__('tables.m-files.birth-d')"
+             :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="mft-TH-5"
+             name="tel"
+              :label="__('tables.m-files.phone-number')"
+              :$sortDirection :$sortBy/>
+             <x-sortable-th
+             wire:key="pdt-TH-6"
+             name="created_at"
+             :label="__('tables.m-files.creation-date')"
+             :$sortDirection :$sortBy/>
              <th scope="column"><div>actions</div></th>
              </tr>
           </thead>
@@ -58,7 +110,6 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                       htmlId="{{ 'md-id'.$mf->id }}"
                       value="{{ $mf->id }}"
                       type="forTable"
-                      event="set-medical-file-id-Externally"
                       wire:key="{{ 'mf-key-'.$mf->id }}"
                     />
                 </td>
@@ -75,7 +126,7 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                 <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
                     content="<i class='fa-solid fa-calendar'></i>"
                     :data='[
-                           "title" => "Prendre un rendez-vous  de contrôle",
+                           "title" => "modals.rendez-vous.for.add-control",
                            "component" => [
                                            "name" => "control-modal",
                                            "parameters" => [
@@ -91,8 +142,8 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                 <livewire:open-dialog-button wire:key="'o-d-mfd-'.{{ $mf->id }}" classes="rounded"
                     content="<i class='fa-solid fa-trash'></i>"
                     :data='[
-                             "question" => "supprimer le dossier médical",
-                             "details" =>"Are you sure you want to delete the medical file:  $mf->code?",
+                             "question" => "dialogs.title.m-file",
+                             "details" =>["m-file", $mf->code],
                              "actionEvent"=>[
                                              "event"=>"delete-medical-file",
                                              "parameters"=>$mf
@@ -103,7 +154,7 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                <livewire:open-modal-button wire:key="'pd-b-mf-'.{{ $mf->id }}" classes="rounded"
                 content="<i class='fa-solid fa-pen-to-square'></i>"
                 :data='[
-                         "title" => "mettre à jour le dossier médical",
+                         "title" => "modals.m-file.for.update",
                          "component" => [
                                           "name" => "user.medical-file-modal",
                                            "parameters" => ["id"=>$mf->id]
@@ -113,7 +164,7 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                  <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
                     content="<i class='fa-solid fa-calendar'></i>"
                     :data='[
-                           "title" => "Prendre un rendez-vous",
+                           "title" => "modals.rendez-vous.for.add",
                            "component" => [
                                            "name" => "rendezvous-modal",
                                            "parameters" => [
@@ -129,13 +180,14 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
 
         </tbody>
     </table>
+    </div>
     <div class="table__footer">
         {{-- {{ $this->establishments->links() }} --}}
     </div>
     @else
     <div class="table__footer">
         <h2>
-            No medical files found at the moment
+            @lang('tables.m-files.not-found')
         </h2>
     </div>
    @endif
@@ -143,3 +195,23 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
 
 
 
+
+@script
+<script>
+function manageMFilesRadioButtonsWihtKeydowEvents() {
+  const radioButtons = document.querySelectorAll('.radio__button');
+  // Consolidated event listener for all radio buttons:
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && e.target.closest('.radio__button')) {
+      e.preventDefault();
+
+      const radioButton = e.target.closest('.radio__button');
+      const radioInput = radioButton.querySelector("input[type='radio']");
+      checkRadio(radioInput, radioButtons);
+      @this.selectedChoice= radioInput.value;
+      @this.callUpdatedSelectedChoiceOnKeyDownEvent();
+    }
+  });
+}
+</script>
+@endscript

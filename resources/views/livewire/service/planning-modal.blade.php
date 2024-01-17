@@ -1,8 +1,8 @@
 @php
     $form = ($id !== '') ? 'updateForm' : 'addForm';
-    $monthsOptions = app('my_constants')['MONTHS_OPTIONS'];
+    $monthsOptions = app('my_constants')['MONTHS_OPTIONS'][app()->getLocale()];
     $yearsOptions = app('my_constants')['YEARS'];
-    $stateOptions= app('my_constants')['PLANNING_STATE']
+    $stateOptions= app('my_constants')['PLANNING_STATE'][app()->getLocale()];
 
 @endphp
 
@@ -10,12 +10,16 @@
     <form class="form" wire:submit.prevent="handleSubmit">
 
        <div>
-        <x-input name="{{ $form }}.name" label="Nom Du Planning" type="text" html_id="pfName" />
+        <x-input
+        name="{{ $form }}.name"
+        :label="__('modals.planning.name')"
+        type="text"
+        html_id="pfName" />
         @if($id!=="")
         <x-selector
         htmlId="mp-state"
          name="{{ $form }}.state"
-         label="état"
+         :label="__('modals.planning.state')"
          :data="$stateOptions"
          />
        @endif
@@ -25,7 +29,7 @@
             <x-selector
             htmlId="mp-year"
              name="{{ $form }}.year"
-             label="Année"
+             :label="__('modals.planning.year')"
              :data="$yearsOptions"
              :showError="true"
              />
@@ -33,7 +37,7 @@
             <x-selector
             htmlId="mp-month"
              name="{{ $form }}.month"
-             label="Mois"
+             :label="__('modals.planning.month')"
              :data="$monthsOptions"
              :showError="true"
              />
@@ -43,7 +47,11 @@
         <div wire:loading>
             <x-loading />
         </div>
-        <button type="submit" class="button button--primary">Valider</button>
+        <button
+        type="submit"
+        class="button button--primary">
+            @lang("modals.common.submit-btn")
+        </button>
     </div>
 
 

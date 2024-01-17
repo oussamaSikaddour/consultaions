@@ -11,7 +11,7 @@ class Dialog extends Component
 
     public $isOpen = false;
     public $question = "";
-    public $details = "";
+    public $details =[];
     public $actionEvent=[];
 
     #[On("open-dialog")]
@@ -28,7 +28,7 @@ class Dialog extends Component
     {
         $this->isOpen = false;
         $this->question ='';
-        $this->details = '';
+        $this->details = [];
         $this->actionEvent= [];
     }
 

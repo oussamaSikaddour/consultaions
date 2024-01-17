@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms\establishment;
 
 use App\Models\ConsultationPlace;
+use App\Rules\LandLineNumberExist;
 use Illuminate\Validation\Rule;
 use Livewire\Form;
 
@@ -13,6 +14,8 @@ class AddPOCForm extends Form
     public $address="";
     public $tel="";
     public $fax="";
+    public $latitude="";
+    public $longitude="";
 
 
     public function rules(){
@@ -25,7 +28,7 @@ class AddPOCForm extends Form
                 'max:255',
                 Rule::unique('consultation_places','name')->where(function ($query) {
                     return $query->where('daira', $this->daira);
-                }),
+                })->whereNull('deleted_at'),
             ],
             'address' => [
                 'required',
@@ -34,22 +37,41 @@ class AddPOCForm extends Form
                 'max:255',
                 Rule::unique('consultation_places','address')->where(function ($query){
                     return $query->where('daira', $this->daira);
-                }),
+                })->whereNull('deleted_at'),
+
+            ],
+
+            'latitude' => [
+                'required',
+                'string',
+                'min:5',
+                'max:25',
+                Rule::unique('consultation_places','latitude')->where(function ($query){
+                    return $query->where('longitude', $this->longitude);
+                })->whereNull('deleted_at'),
+
+            ],
+            'longitude' => [
+                'required',
+                'string',
+                'min:3',
+                'max:25',
+                Rule::unique('consultation_places','longitude')->where(function ($query){
+                    return $query->where('latitude', $this->latitude);
+                })->whereNull('deleted_at'),
+
             ],
 
             'tel' => [
                 'required',
                 'digits:9',
-                Rule::unique('consultation_places','tel')->where(function ($query) {
-                    return $query->where('daira', $this->daira);
-                }),
+                new LandLineNumberExist(new ConsultationPlace())
+              ,
             ],
             'fax' => [
                 'nullable',
                 'digits:9',
-                Rule::unique('consultation_places','fax')->where(function ($query) {
-                    return $query->where('daira', $this->daira);
-                }),
+                new LandLineNumberExist(new ConsultationPlace())
             ],
         ];
     }
@@ -57,11 +79,13 @@ class AddPOCForm extends Form
     public function validationAttributes()
     {
         return [
-            'daira' => 'Daïra',
-            'name' => 'le nom',
-            'address'=>"l'addresse",
-            'tel'=>'numéro de téléphone',
-            'fax'=>'numéro de fax',
+            'daira' => __('modals.c-place.daira'),
+            'name' => __("modals.c-place.name"),
+            'address'=>__("modals.c-place.address"),
+            'tel'=>__("modals.c-place.land-line-number"),
+            'fax'=>__("modals.c-place.fax-number"),
+            'longitude'=>__("modals.c-place.longitude"),
+            'latitude'=>__("modals.c-place.latitude"),
         ];
     }
 
@@ -73,7 +97,7 @@ class AddPOCForm extends Form
 
             return [
                 'status' => true,
-                'success' => 'Le lieu de consultation a été créé avec succès',
+                'success' =>__("forms.c-place.add.success-txt"),
             ];
         } catch (\Exception $e) {
             return [

@@ -8,4 +8,5 @@
 <main class="container__custom">
 @yield("pageContent")
 </main>
+<x-guest.footer />
 @endsection

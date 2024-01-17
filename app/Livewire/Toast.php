@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use Illuminate\Support\Js;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -10,19 +9,19 @@ class Toast extends Component
 {
     public $isOpen = false;
     public $message = "";
+
     #[On('open-toast')]
     public function openToast($message)
     {
-        $this->message = $message;
-        $this->isOpen = true;
-
+        $this->message = $message; // Set message only when opening
+        $this->toggleToast();
     }
 
-    public function closeToast()
+    public function toggleToast()
     {
-        $this->isOpen = false;
+        $this->isOpen = !$this->isOpen;
+        $this->dispatch("handle-toast-state"); // Use dispatchBrowserEvent
     }
-
 
     public function render()
     {

@@ -2,22 +2,23 @@
 
 namespace App\Livewire\Establishment;
 use App\Models\Service;
-use App\Traits\SortableTrait;
+use App\Traits\TableTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Livewire\WithPagination;
 
 class ServicesTable extends Component
 {
-    use WithPagination, SortableTrait;
+    use WithPagination, TableTrait,WithFileUploads;
 
     // Properties with default values
     #[Url()]
     public $headOfService = "";
     #[Url()]
-    public $selectedChoice = null;
+    public $selectedChoice = "empty";
     public $perPage = 1;
     #[Url()]
     public $name = "";
@@ -26,36 +27,31 @@ class ServicesTable extends Component
     public $establishmentId = "";
 
 
+public function resetFilters(){
+$this->headOfService="";
+$this->specialty="";
+$this->name="";
+ }
 
+    public function callUpdatedSelectedChoiceOnKeyDownEvent(){
+        $this->updatedSelectedChoice();
+     }
 
+    public function updatedSelectedChoice(){
+        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
+    }
 
 
     public function updated($property)
     {
-        // $property: The name of the current property that was updated
-
-        if (($property === 'name' || $property==="headOfService" || $property==="specialty") && count($this->services())===0) {
-            $this->setSelectedChoiceAndDispatchEvent('unkonwn');
-        }
+        if($property ==="excelFile"){
+            $this->whenExcelFileUploaded("ServiceImport",
+            __('tables.services.excel-upload-success-msg')
+        );
     }
-    public function selectFirstService()
-    {
-        try {
-            if ($this->selectedChoice === null && $this->services()->isNotEmpty()) {
-                $firstService = $this->services()[0];
-                if ($firstService) {
-                    $this->setSelectedChoiceAndDispatchEvent($firstService->id);
-                }
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('open-errors', [$e->getMessage()]);
+        if ($property === 'name' || $property==="headOfService" || $property==="specialty") {
+            $this->selectedChoice="empty";
         }
-    }
-
-    public function setSelectedChoiceAndDispatchEvent($choice)
-    {
-        $this->selectedChoice = $choice;
-        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
     }
 
     #[Computed]
@@ -91,12 +87,20 @@ class ServicesTable extends Component
 
 
 
+    public function generateEmptyServicesSheet(){
+
+        return $this->generateEmptyExcelWithHeaders(  "services",
+            ["Nom DU SERVICE","CHEF DE SERVICE","SPÉCIALITÉ DE SERVICE"],
+          );
+    }
+
     public function mount()
     {
 
-        $this->selectFirstService();
         // Add the second filter to $filters
-        $this->initializeFilter('specialty', 'Spécialité de service :',app('my_constants')['SPECIALTY_OPTIONS']);
+        $this->initializeFilter('specialty',
+                                __('tables.services.filters.specialty'),
+                                app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()]);
     }
 
     public function placeholder(){

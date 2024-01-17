@@ -5,7 +5,7 @@
     <div>
 
         <livewire:open-modal-button
-        title="Ajouter Un planning"
+        :title="__('pages.services.add-planing-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-calendar-days'></i>"
         :data="$modalData"
@@ -20,6 +20,7 @@
      <livewire:service.plannings-days-table
      lazy
      :serviceId="$id"
+     :showForCoordService=true
      />
 
   <div>

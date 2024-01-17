@@ -1,16 +1,15 @@
-@props(['model','htmlId','value','label'=>'','type'=>"", "event"=>""])
+@props(['model','htmlId','value','label'=>'','type'=>""])
 
 
 <div class="radio__button" {{ $attributes }}>
 
     <input type="radio" id="{{ $htmlId }}"
     @if($type="forTable")
-    x-on:click="$dispatch('{{ $event }}', {selectedValue: $event.target.value })"
+    wire:model.live="{{ $model }}"
     @endif
     wire:model="{{$model}}"
-
     value="{{ $value }}"/>
- <label for="{{ $htmlId }}" >{{ $label }}</label>
+ <label for="{{ $htmlId }}"  role="radio" tabindex="0">{{ $label }}</label>
 </div>
 
 

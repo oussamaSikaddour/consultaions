@@ -43,7 +43,7 @@ class GeneratePasswordEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.generate-password',
+            view: 'emails.'.app()->getLocale().'.generate-password',
             with: [
                 'user' =>$this->user,
                 'password' => $this->password

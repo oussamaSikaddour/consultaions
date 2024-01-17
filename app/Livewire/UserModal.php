@@ -5,7 +5,9 @@ namespace App\Livewire;
 
 use App\Livewire\Forms\AddUserForm;
 use App\Livewire\Forms\UpdateUserForm;
+use App\Models\Service;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class UserModal extends Component
@@ -35,15 +37,19 @@ class UserModal extends Component
                     'specialty' =>$this->user->occupations?->first()?->specialty,
                 ]);
 
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                $this->dispatch('open-errors', [$e->getMessage()]);
+           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        $this->dispatch('open-errors', [$e->getMessage()]);
             }
         }else{
          $this->addForm->fill([
           'userable_id' => $this->userableId,
-          'userable_type'=>$this->userableType
+          'userable_type'=>$this->userableType,
+           "specialty"=> Auth::user()->userable_type==="admin_service"
+           ? Service::find(session('service_id'))->specialty
+           : ""
          ]);
         }
+
     }
 
 
@@ -53,11 +59,9 @@ class UserModal extends Component
         $response = ($this->id !== "")
             ? $this->updateForm->save($this->user)
             : $this->addForm->save();
-
         if ($this->id === "") {
-            $this->addForm->reset('last_name','first_name','birth_date','email','tel','specialty');
+            $this->addForm->reset('last_name','first_name','birth_date','email','tel');
         }
-
         if ($response['status']) {
             $this->dispatch('update-users-table');
             $this->dispatch('open-toast', $response['success']);

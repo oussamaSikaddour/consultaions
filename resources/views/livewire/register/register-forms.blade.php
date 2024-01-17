@@ -1,12 +1,10 @@
 
 
-<div class="forms"
-     x-bind:class="{ 'slide': isSlideUpdated }"
-     x-data="{ isSlideUpdated: {{ $isSlide ? 'true' : 'false' }} }"
-     x-on:is-slide-updated.window="
-         isSlideUpdated = $event.detail[0]
-     "
->
-    <livewire:register.first-form />
-    <livewire:register.second-form />
-</div
+<div class="forms rigster">
+    <livewire:register.first-form  wire:key="r-f-f"/>
+    <livewire:register.second-form wire:key="r-s-f" />
+</div>
+
+
+
+

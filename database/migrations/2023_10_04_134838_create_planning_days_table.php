@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('day_at');
             $table->integer('number_of_consultation');
             $table->integer('number_of_rendez_vous')->nullable();
-            $table->enum('state', ['complet', 'incomplet'])->default('incomplet');
+            $table->enum('state', ['complete', 'incomplete'])->default('incomplete');
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('doctor_id')->references('id')->on('users')->onDelete('cascade');

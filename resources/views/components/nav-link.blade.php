@@ -1,10 +1,10 @@
-@props(['route', 'label','parameter'=>null])
+@props(['route', 'label','parameter'=>null, "span"=>null])
 
 @php
     $isActive = Route::is($route) ? 'active' : '';
 @endphp
 
-<li class="nav__item {{ $isActive }}">
+<li class="nav__item {{ $isActive }}"       role="none">
     <a class="nav__link"
     aria-current="{{$label }}"
     @if($parameter)
@@ -14,6 +14,6 @@
     @endif
 
     >
-    {{ $label }}
+    {{  $label  }} @if($span) {!! $span !!} @endif
     </a>
 </li>

@@ -6,12 +6,14 @@ use App\Models\User;
 use Livewire\Component;
 use App\Livewire\Forms\Admin\ManageRolesForm;
 use App\Models\Role;
+use App\Traits\GeneralTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 
 class ManageRolesModal extends Component
 {
+    use GeneralTrait;
     public ManageRolesForm $form;
     public ?int $id = null;
     public $user;
@@ -41,6 +43,10 @@ class ManageRolesModal extends Component
         return Role::all();
     }
 
+
+    public function updateRolesOnKeydownEvent($value){
+        $this->checkAndUpdateArray($this->form->roles,$value);
+    }
     public function handleSubmit()
     {
         $response = $this->form->save($this->user);

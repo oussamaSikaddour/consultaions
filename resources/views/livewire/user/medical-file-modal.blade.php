@@ -8,20 +8,37 @@
 
         <div>
 
-            <x-input name="{{$form}}.last_name" label="Nom"  type="text"
+            <x-input
+            name="{{$form}}.last_name"
+            :label="__('modals.m-file.l-name')"
+            type="text"
             html_id="{{ $id }}-MFLastName"  />
-            <x-input name="{{$form}}.first_name" label="Prénom"  type="text"
+            <x-input
+            name="{{$form}}.first_name"
+           :label="__('modals.m-file.f-name')"
+             type="text"
              html_id="{{ $id }}-MfFirstName"  />
         </div>
 
        <div>
-        <x-input name="{{$form}}.birth_place" label="Lieu de naissance"  type="text" html_id="{{$id}}-MFBrithDate"  />
-        <x-input name="{{$form}}.birth_date" label="Date de naissance"  type="date" html_id="{{$id}}-MFBrithDate"  />
-       </div>
+        <x-input
+        name="{{$form}}.birth_date"
+        :label="__('modals.m-file.birth-d')"
+         type="date"
+         html_id="{{$id}}-MFBrithDate"  />
 
-        <div>
-        <x-input name="{{$form}}.address" label="adresse"  type="text" html_id="{{ $id }}-MFA"  />
-         <x-input name="{{$form}}.tel" label="tel"  type="text" html_id="{{$id}}-MFTel" />
+        <x-input
+        name="{{$form}}.address"
+        :label="__('modals.m-file.address')"
+         type="text"
+          html_id="{{ $id }}-MFA"  />
+       </div>
+       <div>
+         <x-input
+         name="{{$form}}.tel"
+         :label="__('modals.m-file.phone-number')"
+         type="text"
+          html_id="{{$id}}-MFTel" />
         </div>
 
 
@@ -29,7 +46,9 @@
             <div wire:loading>
                 <x-loading  />
            </div>
-            <button type="submit" class="button button--primary">Valider</button>
+            <button type="submit" class="button button--primary">
+              @lang("modals.common.submit-btn")
+            </button>
         </div>
     </form>
 

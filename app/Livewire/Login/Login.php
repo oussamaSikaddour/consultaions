@@ -16,7 +16,7 @@ class Login extends Component
         $response =  $this->form->save();
         $this->form->reset();
        if ($response['status']) {
-        return redirect()->route($response['data'][0],$response['data'][1]);
+        return redirect()->route($response['data']);
        }else{
          $this->dispatch('open-errors', [$response['error']]);
          }

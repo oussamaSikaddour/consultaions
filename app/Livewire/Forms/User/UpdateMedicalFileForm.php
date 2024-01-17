@@ -24,7 +24,6 @@ class UpdateMedicalFileForm extends Form
         return [
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'birth_place' => 'required|string|max:255',
             'birth_date' => 'required|date',
             'address' => 'required|string|min:10|max:255',
             'tel' => [
@@ -39,13 +38,11 @@ class UpdateMedicalFileForm extends Form
             public function validationAttributes()
             {
                 return [
-
-                    'last_name' => 'nom',
-                     'first_name' => 'prénom',
-                     'birth_place' => 'lieu de naissance',
-                     'birth_date' => 'date de naissance',
-                     'address' => 'adresse actuelle',
-                     'tel'=> 'numéro de téléphone'
+                    'last_name' =>__("modals.m-file.l-name"),
+                    'first_name' =>__("modals.m-file.f-name"),
+                    'birth_date' =>__("modals.m-file.birth-d"),
+                    'address' =>__("modals.m-file.address"),
+                    'tel'=>__("modals.m-file.phone-number")
                 ];
             }
 
@@ -57,7 +54,7 @@ class UpdateMedicalFileForm extends Form
             $medicalFile->update($validatedData);
             return [
                 'status' => true,
-                'success' => 'Le dossier médical a été mis à jour avec succès',
+                'success' => __('forms.m-file.update.success-txt'),
             ];
         } catch (\Exception $e) {
             return [

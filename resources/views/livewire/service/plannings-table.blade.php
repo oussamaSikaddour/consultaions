@@ -1,8 +1,9 @@
 @php
-        $months= app('my_constants')['MONTHS']
+$months= app('my_constants')['MONTHS'][app()->getLocale()]
 @endphp
 <div class="table__container"
 x-on:update-plannings-table.window="$wire.$refresh()"
+x-on:wire="managePlanningsRadioButtonsWihtKeydowEvents()"
  >
     <div class="table__header">
 
@@ -10,19 +11,23 @@ x-on:update-plannings-table.window="$wire.$refresh()"
 
         </div>
         <div>
-            <x-input name="name" label="Nom du Planning"  type="text" html_id="planningTName" role="filter"/>
+            <x-input
+            name="name"
+            :label="__('tables.plannings.name')"
+            type="text"
+             html_id="planningTName"
+              role="filter"/>
         </div>
         <div class="table__filters">
 
             @if(isset($filters) && is_array($filters) && count($filters) > 0)
             @foreach ($filters as $filter)
-
-
                     <x-selector
                      htmlId="{{ 'TP-'.$filter['name']}}"
                      :name="$filter['name']"
                      :label="$filter['label']"
                      :data="$filter['data']"
+                     :toTranslate="$filter['toTranslate']"
                      type="filter"
                      />
 
@@ -30,22 +35,45 @@ x-on:update-plannings-table.window="$wire.$refresh()"
         @endif
 
         </div>
+        <div>
+            <button class="button button--primary rounded" wire:click="resetFilters">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
     </div>
 
     @if(isset($this->plannings) && $this->plannings->isNotEmpty())
 
-
-
+    <div class="table__body">
     <table>
         <thead>
             <tr>
            <th></th>
-           <x-sortable-th wire:key="pl-TH-1" name="name" label="Nom de planning"
+           <x-sortable-th
+           wire:key="pl-TH-1"
+           name="name"
+           :label="__('tables.plannings.name')"
             :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="pl-TH-2" name="year" label="Année" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="pl-TH-3" name="month" label="Mois" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="pl-TH-4" name="state" label="Etat" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="pl-TH-5" name="created_at" label="Date de creation" :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="pl-TH-2"
+            name="year"
+            :label="__('tables.plannings.year')"
+            :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="pl-TH-3"
+            name="month"
+            :label="__('tables.plannings.month')"
+            :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="pl-TH-4"
+           name="state"
+          :label="__('tables.plannings.state')"
+           :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="pl-TH-5"
+            name="created_at"
+            :label="__('tables.plannings.creation-date')"
+            :$sortDirection :$sortBy/>
            <th scope="column"><div>actions</div></th>
             </tr>
         </thead>
@@ -55,26 +83,25 @@ x-on:update-plannings-table.window="$wire.$refresh()"
                 <tr wire:key="{{ $p->id }}" >
                     <td>
                         <x-radio-button
-                         model="selectedChoice"
-                          htmlId="{{ 'p-id'.$p->id }}"
-                          value="{{ $p->id }}"
-                          type="forTable"
-                          event="set-planning-id-externally"
-                          wire:key="{{ 'pl-key-'.$p->id }}"
-                        />
+                        model="selectedChoice"
+                         htmlId="{{ 'p-id'.$p->id }}"
+                         value="{{ $p->id }}"
+                         type="forTable"
+                         wire:key="{{ 'p-key-'.$p->id }}"
+                       />
                     </td>
                     <td scope="row">{{ $p->name }}</td>
                     <td>{{ $p->year }}</td>
                     <td>{{ $months[$p->month - 1] }}</td>
-                    <td>{{ $p->state }}</td>
+                    <td>{{app('my_constants')['PLANNING_STATE'][app()->getLocale()][$p->state]}}</td>
                     <td>{{ $p->created_at->format('d/m/Y') }}</td>
                     <td>
-                        @if($p->state==="non publié")
+                        @if($p->state==="not_published")
                         <livewire:open-dialog-button wire:key="'o-d-pl-'.{{ $p->id }}" classes="rounded"
                             content="<i class='fa-solid fa-trash'></i>"
                             :data='[
-                                     "question" => "supprimer le planning",
-                                     "details" =>"Are you sure you want to delete  $p->name ?",
+                                     "question" => "dialogs.title.planning",
+                                     "details" =>["planning", $p->name],
                                      "actionEvent"=>[
                                                      "event"=>"delete-planning",
                                                      "parameters"=>$p
@@ -84,7 +111,7 @@ x-on:update-plannings-table.window="$wire.$refresh()"
                         <livewire:open-modal-button  wire:key="o-p-m-pl-{{ $p->id }}" classes="rounded"
                             content="<i class='fa-solid fa-pen-to-square'></i>"
                             :data='[
-                            "title" => "Modifier Planning",
+                            "title" => "modals.planning.for.update",
                             "component" =>[
                                           "name" => "service.planning-modal",
                                           "parameters" => ["id" => $p->id]]]'
@@ -92,7 +119,7 @@ x-on:update-plannings-table.window="$wire.$refresh()"
                         <livewire:open-modal-button wire:key="'o-p-m-pl-d-'.{{ $p->id }}"            classes="rounded"
                                 content="<i class='fa-solid fa-calendar'></i>"
                                 :data='[
-                                       "title" => "Ajout Jour Du Planning",
+                                       "title" => "modals.planning-day.for.add",
                                        "component" => [
                                                        "name" => "service.plannings-day-modal",
                                                        "parameters" => [
@@ -101,7 +128,7 @@ x-on:update-plannings-table.window="$wire.$refresh()"
                                         ]'
                                    />
                     @else
-                    <div>Déjà publié</div>
+                    <div>@lang("tables.plannings.already-published")</div>
                     @endif
                     </td>
                 </tr>
@@ -109,7 +136,7 @@ x-on:update-plannings-table.window="$wire.$refresh()"
         </tbody>
 
     </table>
-
+    </div>
     <div class="table__footer">
         {{-- {{ $this->establishments->links() }} --}}
 
@@ -118,8 +145,29 @@ x-on:update-plannings-table.window="$wire.$refresh()"
 
     <div class="table__footer">
     <h2>
-        No plannings have been added at the moment.
+        @lang("tables.plannings.not-found")
     </h2>
     </div>
    @endif
 </div>
+
+
+@script
+<script>
+function managePlanningsRadioButtonsWihtKeydowEvents() {
+  const radioButtons = document.querySelectorAll('.radio__button');
+  // Consolidated event listener for all radio buttons:
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && e.target.closest('.radio__button')) {
+      e.preventDefault();
+
+      const radioButton = e.target.closest('.radio__button');
+      const radioInput = radioButton.querySelector("input[type='radio']");
+      checkRadio(radioInput, radioButtons);
+      @this.selectedChoice= radioInput.value;
+      @this.callUpdatedSelectedChoiceOnKeyDownEvent();
+    }
+  });
+}
+</script>
+@endscript

@@ -3,7 +3,8 @@
 namespace App\Livewire\Forms\Admin;
 
 use App\Models\Establishment;
-use Livewire\Attributes\Rule;
+use App\Rules\LandLineNumberExist;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 class UpdateEstablishmentForm extends Form
@@ -18,31 +19,60 @@ class UpdateEstablishmentForm extends Form
 
     public function rules()
     {
-        return [
-            'acronym' => "required|string|min:3|max:10|unique:establishments,acronym," . $this->id,
-            'name' => "required|string|min:10|max:255|unique:establishments,name," . $this->id,
-            'email' => "required|email|unique:establishments,email," . $this->id,
-            'address' => 'required|string|max:255',
-            'tel' => [
-                'required',
-                'digits:9',
-            ],
-            'fax' => [
-                'required',
-                'digits:9',
-            ],
-        ];
+
+            return [
+                'acronym' => [
+                    'required',
+                    'string',
+                     "max:10",
+                    Rule::unique('establishments', 'acronym')
+                        ->whereNull('deleted_at')
+                        ->ignore($this->id),
+                ],
+                'name' => [
+                    'required',
+                    'string',
+                     "max:255",
+                    Rule::unique('establishments', 'name')
+                        ->whereNull('deleted_at')
+                        ->ignore($this->id)
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                     "max:255",
+                    Rule::unique('establishments', 'email')
+                        ->whereNull('deleted_at')
+                        ->ignore($this->id)
+                ],
+                'address' => [
+                    'required',
+                    'string',
+                     "max:255",
+                    Rule::unique('establishments', 'address')
+                        ->whereNull('deleted_at')
+                        ->ignore($this->id)
+                ],
+                'tel' => [
+                    'required',
+                    'digits:9',
+                     new LandLineNumberExist(new Establishment(),$this->id)
+                ],
+                'fax' => ['nullable','digits:9',
+                new LandLineNumberExist(new  Establishment(),$this->id)]
+            ];
+
     }
 
     public function validationAttributes()
     {
         return [
-            'acronym' => 'abréviation du nom',
-            'name' => 'le nom',
-            'email' => "l'émail",
-            'address' => "l'adresse",
-            'tel' => 'numéro du téléphone fixe',
-            'fax' => 'numéro du téléphone fax',
+            'acronym' => __("modals.establishment.acronym"),
+            'name' => __("modals.establishment.name"),
+            'email' => __('modals.establishment.email'),
+            'address' =>__("modals.establishment.address"),
+            'tel' =>__('modals.establishment.land-line-number'),
+            'fax' =>__('modals.establishment.fax-number'),
         ];
     }
 
@@ -55,7 +85,7 @@ class UpdateEstablishmentForm extends Form
 
             return [
                 'status' => true,
-                'success' => "L'établissement a été mis à jour avec succès",
+                'success' =>__("forms.establishment.update.success-txt"),
             ];
         } catch (\Exception $e) {
             return [

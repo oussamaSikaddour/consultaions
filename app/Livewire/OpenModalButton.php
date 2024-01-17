@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
 class OpenModalButton extends Component

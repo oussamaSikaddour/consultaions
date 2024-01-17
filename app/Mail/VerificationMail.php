@@ -44,7 +44,7 @@ class VerificationMail extends Mailable
     {
         $otp = $this->otp->generate($this->user->email, 6, 60);
         return new Content(
-            view: 'emails.verification',
+            view: 'emails.'.app()->getLocale().'.verification',
             with: [
                 'user' =>$this->user,
                 'verification_code' => $otp->token

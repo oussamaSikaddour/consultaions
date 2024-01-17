@@ -3,18 +3,20 @@
 namespace App\Livewire\Establishment;
 
 use App\Models\ConsultationPlace;
-use App\Traits\SortableTrait;
+use App\Traits\GeneralTrait;
+use App\Traits\TableTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Livewire\WithPagination;
 
 class ConsultationsPlacesTable extends Component
 {
 
 
-    use WithPagination, SortableTrait;
+    use WithPagination, TableTrait,WithFileUploads, GeneralTrait;
 
     // Properties with default values
     #[Url()]
@@ -27,40 +29,43 @@ class ConsultationsPlacesTable extends Component
     public $tel = "";
     public $fax="";
     #[Url()]
-    public $selectedChoice = null;
+    public $selectedChoice = "empty";
 
 
+
+
+    public function resetFilters(){
+        $this->name="";
+        $this->daira="";
+        $this->address="";
+        $this->tel="";
+        $this->fax="";
+         }
+    public function callUpdatedSelectedChoiceOnKeyDownEvent(){
+        $this->updatedSelectedChoice();
+     }
+
+    public function updatedSelectedChoice(){
+        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
+    }
 
 
 
 
     public function updated($property)
     {
-        // $property: The name of the current property that was updated
-
-        if (($property === 'daira' || $property==="name" || $property==="fax" || $property==="tel"  || $property==="address") && count($this->consultationsPlaces())===0) {
-            $this->setSelectedChoiceAndDispatchEvent('unkonwn');
-        }
+        if($property ==="excelFile"){
+            $this->whenExcelFileUploaded("CPlaceImport",
+            __('tables.c-places.excel-upload-success-msg')
+        );
     }
-    public function selectFirstConsultationPlace()
-    {
-        try {
-            if ($this->selectedChoice === null && $this->consultationsPlaces()->isNotEmpty()) {
-                $firstService = $this->consultationsPlaces()[0];
-                if ($firstService) {
-                    $this->setSelectedChoiceAndDispatchEvent($firstService->id);
-                }
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('open-errors', [$e->getMessage()]);
+        if ($property === 'daira' || $property==="name" || $property==="fax" || $property==="tel"  || $property==="address") {
+            $this->selectedChoice="empty";
         }
     }
 
-    public function setSelectedChoiceAndDispatchEvent($choice)
-    {
-        $this->selectedChoice = $choice;
-        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
-    }
+
+
 
     #[Computed]
     public function consultationsPlaces()
@@ -102,11 +107,20 @@ class ConsultationsPlacesTable extends Component
     }
 
 
+
+
+    public function generateEmptyCPlacesSheet(){
+
+        return $this->generateEmptyExcelWithHeaders(  "LieuxDeConsultations",
+            ["Nom du lieu des consultations","Adresse","latitude","longitude","Numéro de téléphone fixe","Numéro de fax","Daïra"],
+          );
+    }
     public function mount()
     {
 
-        $this->selectFirstConsultationPlace();
-        $this->initializeFilter('daira', 'Daïra',app('my_constants')['DAIRAS']);
+     $this->initializeFilter('daira',
+        __('tables.c-places.filters.daira')
+        ,app('my_constants')['DAIRAS'][app()->getLocale()]);
 
     }
 

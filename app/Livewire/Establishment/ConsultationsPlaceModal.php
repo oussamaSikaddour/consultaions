@@ -30,6 +30,9 @@ class ConsultationsPlaceModal extends Component
                     'address' => $this->consultationsPlace->address,
                     'tel' => $this->consultationsPlace->tel,
                     'fax' => $this->consultationsPlace->fax,
+                    "latitude"=>$this->consultationsPlace->latitude,
+                    "longitude"=>$this->consultationsPlace->longitude
+
                 ]);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 $this->dispatch('open-errors', [$e->getMessage()]);

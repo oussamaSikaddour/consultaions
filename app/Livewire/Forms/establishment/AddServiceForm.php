@@ -25,7 +25,7 @@ class AddServiceForm extends Form
                     'max:255',
                     Rule::unique('services','name')->where(function ($query) {
                         return $query->where('establishment_id', $this->establishment_id);
-                    }),
+                    })->whereNull('deleted_at'),
                 ],
                 'specialty' => [
                     'required',
@@ -43,7 +43,7 @@ class AddServiceForm extends Form
                     'max:255',
                     Rule::unique('services','head_of_service')->where(function ($query)  {
                         return $query->where('establishment_id', $this->establishment_id);
-                    }),
+                    })->whereNull('deleted_at'),
                 ],
             ];
 
@@ -53,9 +53,9 @@ class AddServiceForm extends Form
     {
         return [
             'establishment_id' => 'établissement',
-            'name' => 'le nom',
-            'specialty'=>'specialty',
-            'head_of_service'=>'chef de service',
+            'name' => __("modals.service.name"),
+            'specialty'=>__("modals.service.specialty"),
+            'head_of_service'=>__("modals.service.head-service"),
         ];
     }
 
@@ -67,7 +67,7 @@ class AddServiceForm extends Form
 
             return [
                 'status' => true,
-                'success' => "le service a été créé avec succès",
+                'success' =>__("forms.service.add.success-txt"),
             ];
         } catch (\Exception $e) {
             return [

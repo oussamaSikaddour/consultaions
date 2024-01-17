@@ -1,0 +1,121 @@
+<?php
+return [
+    "common"=>[
+        "excel-file-type-err"=>"The file must be in Excel format (XLSX, XLS, CSV)",
+    ],
+    'users'=> [
+     "fullName"=>"Name",
+     "email"=>"Email",
+     "specialty"=>"Specialty",
+     "registration-date"=>"Registration Date",
+     "phone"=>"Phone Number",
+     "filters"=>[
+              "specialty"=>"Specialty :",
+              "user-type"=>"User Role :"
+     ],
+     "not-found"=>"No users Found at the moment",
+    ],
+    "establishments"=>[
+        "empty-excel"=>"Generate an empty Excel establishments sheet",
+        "upload-excel-btn-txt"=>"Upload Establishments",
+        "excel-upload-success-msg"=>"Establishments uploaded successfully",
+        "acronym"=>"Name Abbreviation",
+        "name"=>"Name",
+        "email"=>"Email",
+        "address"=>"Address",
+        "land-line-number"=>"Land line number",
+        "fax-number"=>"Fax number",
+        "creation-date"=>"Added Date",
+        "not-found"=>"No establishments Found at the moment",
+    ],
+    "services"=>[
+        "empty-excel"=>"Generate an empty Excel services sheet",
+        "upload-excel-btn-txt"=>"Upload Services",
+        "excel-upload-success-msg"=>"Services uploaded successfully",
+        "name"=>"Service Name",
+        "head-service"=>"Head Of The Service",
+        "specialty"=>"Service Specialty",
+        "creation-date"=>"Added Date",
+        "filters"=>[
+            "specialty"=>"Specialty :",
+
+             ],
+        "not-found"=>"No Services Found at the moment",
+            ],
+    "plannings"=>[
+          "name"=>"Planning Name",
+           "year"=>"Year",
+           "state"=>"State",
+            "month"=>"Month",
+            "creation-date"=>"Added Date",
+            "filters"=>[
+                "year"=>"Year :",
+                 "month"=>"Month :",
+                 "state"=>"State :",
+             ],
+             "already-published"=>"Already published",
+            "not-found"=>"No Plannings Found at the moment",
+    ],
+    "planning-days"=>[
+        "date"=>"The Date",
+        "doctor"=>"Doctor",
+        "c-place"=>"Consultations Place",
+        "c-number"=>"Consultations Number",
+        "creation-date"=>"Added Date",
+        "filters"=>[
+              "specialty"=>"Specialty :",
+              "doctor"=>"Doctor :",
+              "c-place"=>"Consultations Place :"
+        ],
+        "already-published"=>"Already published",
+        "not-found" => "No Planning days Found at the moment",
+     ],
+    "c-places"=>[
+        "empty-excel"=>"Generate an empty consultations places Excel sheet",
+        "upload-excel-btn-txt"=>"Upload consultations places",
+        "excel-upload-success-msg"=>"Consultations places uploaded successfully",
+        "name"=>"Consultations Place Name",
+        "address"=>"Address",
+        "land-line-number"=>"Land line number",
+        "fax-number"=>"Fax number",
+        "filters"=>[
+            "daira"=>"Daïra",
+             ],
+        "creation-date"=>"Added Date",
+        "not-found"=>"No Consultations places Found at the moment",
+            ],
+    "m-files"=>[
+        "code"=>"File Code",
+        "birth-d"=>"Birth Date",
+        "l-name" =>"Last Name",
+        "f-name" =>"First Name",
+        "phone-number"=>"Phone Number",
+        "creation-date"=>"Added Date",
+        "not-found"=>"No Medical files Found at the moment",
+    ],
+    "rendez-vous"=>[
+        "mf-code"=>"File Code",
+        "date"=>"Date At",
+         "type"=>"Type",
+        "name"=>"Patient name",
+        "birth-d"=>"Birth Date",
+        "start-d"=>"Start Date",
+        "end-d"=>"End Date",
+        "patient-l-name"=>"Patient Last name",
+        "patient-f-name"=>"Patient First name",
+        "specialty"=>"Specialty",
+        "doctor"=>"Doctor",
+         'd-email'=>"Doctor email",
+         'd-phone'=>"Doctor phone number",
+         "establishment"=>"Establishment",
+         "c-place"=>"Consultation Place",
+         "filters"=>[
+            "doctor"=>"Doctor :",
+            "specialty"=>"Specialty :",
+             "c-place"=>"Consultation Place :",
+             "type"=>"Type :",
+             ],
+        "not-found"=>"No appointments found at the moment",
+        "delete-err"=>"You can't delete the appointment. It's within 3 days from now"
+    ]
+];

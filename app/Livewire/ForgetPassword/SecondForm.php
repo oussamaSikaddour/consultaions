@@ -14,16 +14,8 @@ class SecondForm extends Component
 
 
 
-
-public function mount(){
-    $this->form->email = session()->has('forget-password-email')
-    ? session('forget-password-email') : '';
-}
-    #[On('fgp-email-set')]
-    public function setEmail()
-    {
-        $this->form->email = session()->has('forget-password-email')
-        ? session('forget-password-email') : '';
+    public function setEmail($email){
+        $this->form->email = $email;
     }
 
     public function handleSubmit()
@@ -32,8 +24,8 @@ public function mount(){
        if ($response['status']) {
         $this->reset();
          session()->forget('forget-password-email');
-         $this->dispatch('is-slide-updated', false);
-         redirect()->route($response['data'][0], $response['data'][1]);
+         $this->dispatch('second-step-succeeded');
+         redirect()->route($response['data']);
          }else{
             $this->dispatch('open-errors', [$response['error']]);
          }

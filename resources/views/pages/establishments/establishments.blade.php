@@ -5,7 +5,7 @@
     <div>
 
         <livewire:open-modal-button
-        title="Ajouter Un Service"
+        :title="__('pages.establishment.add-service-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-hospital'></i>"
         :data="$modalData"
@@ -18,7 +18,7 @@
      :establishmentId="$id"  />
      <livewire:users-table
      lazy
-     noUserFoundMessage="Aucun  coordinateur trouvé pour le service sélectionné pour le moment"
+     :customNoUserFoundMessage="__('pages.establishment.coord-not-fount-txt')"
      userableType="admin_service"
      userableId="unkonwn"
      />

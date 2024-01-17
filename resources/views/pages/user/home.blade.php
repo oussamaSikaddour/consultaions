@@ -3,7 +3,7 @@
 <section class="section">
     <div>
         <livewire:open-modal-button
-        title="Ajouter Un Dossier médical"
+        :title="__('pages.rendez-vous.add-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-folder-open'></i>"
         :data="$modalData"/>

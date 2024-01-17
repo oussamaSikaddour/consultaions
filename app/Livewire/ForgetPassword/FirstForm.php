@@ -11,20 +11,16 @@ class FirstForm extends Component
 
 
     public forgetPasswordFirstForm $form;
+       public $forgetPasswordEmail;
 
-    public function updated($property)
-    {
-     if($property ==="form.email"){
-        $this->dispatch('fgp-email-set');
-     }
-    }
     public function handleSubmit()
     {
+        $this->forgetPasswordEmail = $this->form->email;
         $response =  $this->form->save();
        if ($response['status']) {
            session(['forget-password-email' => $this->form->email]);
            $this->dispatch('open-toast', $response['success']); // Corrected the variable name
-           $this->dispatch('is-slide-updated', true);
+           $this->dispatch('first-step-succeeded');
             $this->form->reset();
          }else{
             $this->dispatch('open-errors', [$response['error']]);

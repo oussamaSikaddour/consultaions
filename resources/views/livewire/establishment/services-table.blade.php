@@ -1,12 +1,32 @@
 
-<div class="table__container"  x-on:update-services-table.window="$wire.$refresh()">
+<div class="table__container"
+x-on:update-services-table.window="$wire.$refresh()"
+x-on:init="manageServicesRadioButtonsWihtKeydowEvents()">
     <div class="table__header">
-
         <div>
+            {{-- <button class="button button--primary rounded table__button" ><i class="fa-solid fa-file-excel"></i></button> --}}
+            <button class="button button--primary" wire:click="generateEmptyServicesSheet()">
+            @lang("tables.services.empty-excel")
+            </button>
+
+            <x-upload-input
+            model="excelFile"
+            :label="__('tables.services.upload-excel-btn-txt')"
+            />
         </div>
         <div>
-            <x-input name="name" label="Nom de service"  type="text" html_id="serviceTName" role="filter"/>
-            <x-input name="headOfService" label="Le chef de service"  type="text" html_id="serviceTHOS" role="filter"/>
+            <x-input
+             name="name"
+             :label="__('tables.services.name')"
+             type="text"
+             html_id="serviceTName"
+             role="filter"/>
+            <x-input
+            name="headOfService"
+             :label="__('tables.services.head-service')"
+             type="text"
+             html_id="serviceTHOS"
+             role="filter"/>
         </div>
         <div class="table__filters">
 
@@ -17,26 +37,50 @@
                      :name="$filter['name']"
                      :label="$filter['label']"
                      :data="$filter['data']"
+                     :toTranslate="$filter['toTranslate']"
                      type="filter"
                      />
             @endforeach
         @endif
 
         </div>
+
+        <div>
+            <button class="button button--primary rounded" wire:click="resetFilters">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </div>
     </div>
 
     @if(isset($this->services) && $this->services->isNotEmpty())
 
 
-
+    <div class="table__body">
     <table>
         <thead>
             <tr>
            <th></th>
-           <x-sortable-th wire:key="s-TH-2" name="name" label="Nom de service"   :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="s-TH-3" name="head_of_service" label="Chef de service" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="s-TH-3" name="specialty" label="Spécialité de service" :$sortDirection :$sortBy/>
-           <x-sortable-th wire:key="s-TH-4" name="created_at" label="Date de creation" :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="s-TH-2"
+           name="name"
+           :label="__('tables.services.name')"
+           :$sortDirection :$sortBy/>
+           <x-sortable-th wire:key="s-TH-3"
+           name="head_of_service"
+           :label="__('tables.services.head-service')"
+            :$sortDirection
+            :$sortBy/>
+           <x-sortable-th
+           wire:key="s-TH-3"
+           name="specialty"
+           :label="__('tables.services.specialty')"
+           :$sortDirection :$sortBy/>
+           <x-sortable-th
+           wire:key="s-TH-4"
+           name="created_at"
+           :label="__('tables.services.creation-date')"
+           :$sortDirection
+           :$sortBy/>
            <th scope="column"><div>actions</div></th>
 
             </tr>
@@ -51,20 +95,19 @@
                           htmlId="{{ 's-id'.$s->id }}"
                           value="{{ $s->id }}"
                           type="forTable"
-                          event="set-userable-id-Externally"
                           wire:key="{{ 's-key-'.$s->id }}"
                         />
                     </td>
                     <td scope="row">{{ $s->name }}</td>
                     <td>{{ $s->head_of_service }}</td>
-                    <td>{{ $s->specialty}}</td>
+                    <td>{{ app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()][$s->specialty]}}</td>
                     <td>{{ $s->created_at->format('d/m/Y') }}</td>
                     <td>
                         <livewire:open-dialog-button wire:key="'o-d-s-'.{{ $s->id }}" classes="rounded"
                             content="<i class='fa-solid fa-trash'></i>"
                             :data='[
-                                     "question" => "Supprimer le service",
-                                     "details" =>"Êtes-vous sûr de vouloir supprimer le service$s->name ?",
+                                     "question" => "dialogs.title.service",
+                                     "details" =>["service",$s->name],
                                      "actionEvent"=>[
                                                      "event"=>"delete-service",
                                                      "parameters"=>$s
@@ -74,7 +117,7 @@
                         <livewire:open-modal-button  wire:key="o-p-m-s-{{ $s->id }}" classes="rounded"
                             content="<i class='fa-solid fa-pen-to-square'></i>"
                             :data='[
-                                    "title" => "mise à jour du service",
+                                    "title" => "modals.service.for.update",
                                     "component" => [
                                                    "name" => "establishment.service-modal", "parameters" => ["id" => $s->id]
                                                    ]
@@ -83,7 +126,7 @@
                         <livewire:open-modal-button wire:key="'o-p-m-u-s-'.{{ $s->id }}" classes="rounded"
                             content="<i class='fa-solid fa-users'></i>"
                             :data='[
-                                    "title" => "Ajout de coordinateur",
+                                    "title" => "modals.user.for.add-coord-service",
                                     "component" => [
                                                     "name" => "user-modal",
                                                      "parameters" => [
@@ -97,7 +140,7 @@
         </tbody>
 
     </table>
-
+    </div>
     <div class="table__footer">
         {{-- {{ $this->establishments->links() }} --}}
 
@@ -106,9 +149,30 @@
     @else
     <div class="table__footer">
     <h2>
-        Aucun service trouvé pour le moment.
+        @lang('tables.services.not-found')
     </h2>
     </div>
    @endif
 
 </div>
+
+
+@script
+<script>
+function manageServicesRadioButtonsWihtKeydowEvents() {
+  const radioButtons = document.querySelectorAll('.radio__button');
+  // Consolidated event listener for all radio buttons:
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && e.target.closest('.radio__button')) {
+      e.preventDefault();
+
+      const radioButton = e.target.closest('.radio__button');
+      const radioInput = radioButton.querySelector("input[type='radio']");
+      checkRadio(radioInput, radioButtons);
+      @this.selectedChoice= radioInput.value;
+      @this.callUpdatedSelectedChoiceOnKeyDownEvent();
+    }
+  });
+}
+</script>
+@endscript

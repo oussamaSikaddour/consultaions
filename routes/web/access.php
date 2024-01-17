@@ -18,14 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::middleware('can:admin-access')->group(function () {
-        Route::get('/siteParameters', [RoutesController::class, 'showSiteParametersPage'])->name("siteParameters");
-    });
 });
 
 Route::group(['middleware' => ['auth','maintenance']], function () {
-    // User Route
-
     Route::get('/noAccess', [AuthController::class, 'noAccessPage'])->name('noAccess');
     Route::get('/changePassword', [AuthController::class, 'changePasswordPage'])->name('changePassword');
     Route::get('/home', [RoutesController::class, 'showUserPage'])->name(RoutesNamesEnum::USER_ROUTE);
@@ -37,7 +32,7 @@ Route::group(['middleware' => ['auth','maintenance']], function () {
     });
     // Establishment Route with optional 'id' parameter
     Route::middleware('can:admin-establishment-access')->group(function () {
-        Route::get('/establishments/{id?}', [
+        Route::get('/establishment', [
             RoutesController::class, 'showEstablishmentPage'])
             ->name(RoutesNamesEnum::ESTABLISHMENT_ROUTE);
         Route::get('/places-of-consultations', [
@@ -48,7 +43,7 @@ Route::group(['middleware' => ['auth','maintenance']], function () {
 
     // Service Route with optional 'id' parameter
     Route::middleware('can:admin-service-access')->group(function () {
-        Route::get('/services/{id?}', [RoutesController::class, 'showServicePage'])
+        Route::get('/services', [RoutesController::class, 'showServicePage'])
             ->name(RoutesNamesEnum::SERVICE_ROUTE);
          Route::get('/doctors/{establishmentId?}', [RoutesController::class, 'showDoctorsPage'])
             ->name('doctors');
@@ -56,7 +51,7 @@ Route::group(['middleware' => ['auth','maintenance']], function () {
 
     // Place of Consultation Route
     Route::middleware('can:admin-place-of-consultation-access')->group(function () {
-        Route::get('/consultationsServices/{id?}', [RoutesController::class, 'showPlaceOfConsultationAdminPage'])
+        Route::get('/consultationsServices', [RoutesController::class, 'showPlaceOfConsultationAdminPage'])
         ->name(RoutesNamesEnum::PLACE_Of_CONSULTATION_ROUTE);
     });
 

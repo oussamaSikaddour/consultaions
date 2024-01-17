@@ -26,16 +26,13 @@ class UpdateServiceForm extends Form
                 'max:255',
                 Rule::unique('services','name')->where(function ($query) {
                     return $query->where('establishment_id', $this->establishment_id);
-                })->ignore($this->id)
+                })->whereNull('deleted_at')->ignore($this->id)
             ],
             'specialty' => [
                 'required',
                 'string',
                 'min:5',
                 'max:255',
-                Rule::unique('services','specialty')->where(function ($query){
-                    return $query->where('establishment_id', $this->establishment_id);
-                })->ignore($this->id)
             ],
             'head_of_service'  => [
                 'required',
@@ -44,7 +41,7 @@ class UpdateServiceForm extends Form
                 'max:255',
                 Rule::unique('services','head_of_service')->where(function ($query) {
                     return $query->where('establishment_id', $this->establishment_id);
-                })->ignore($this->id)
+                })->whereNull('deleted_at')->ignore($this->id)
             ],
         ];
     }
@@ -54,9 +51,9 @@ class UpdateServiceForm extends Form
         return [
             'id'=>'service',
             'establishment_id' => 'établissement',
-            'name' => 'nom',
-            'specialty'=>'specialty',
-            'head_of_service'=>'chef de service',
+            'name' => __("modals.service.name"),
+            'specialty'=>__("modals.service.specialty"),
+            'head_of_service'=>__("modals.service.head-service"),
         ];
     }
 
@@ -69,7 +66,7 @@ class UpdateServiceForm extends Form
 
             return [
                 'status' => true,
-                'success' => "Le service a été mis à jour avec succès",
+                'success' => __("forms.service.update.success-txt")
             ];
         } catch (\Exception $e) {
             return [

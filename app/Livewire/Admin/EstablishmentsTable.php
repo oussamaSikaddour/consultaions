@@ -1,71 +1,61 @@
 <?php
 
 namespace App\Livewire\Admin;
-
 use App\Models\Establishment;
+use App\Traits\GeneralTrait;
+use App\Traits\TableTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Traits\SortableTrait;
-use Livewire\Attributes\On;
 
-use function PHPUnit\Framework\isEmpty;
+use Livewire\Attributes\On;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class EstablishmentsTable extends Component
 {
-    use WithPagination, SortableTrait;
+    use WithPagination,TableTrait ,GeneralTrait,WithFileUploads;
 
     // Properties with default values
     #[Url()]
     public $name = "";
     #[Url()]
-    public $selectedChoice = null;
+    public $selectedChoice="empty";
     #[Url()]
     public $perPage = 1;
     #[Url()]
     public $acronym = "";
     #[Url()]
     public $email = "";
+    public $uploadFunction;
 
 
-    public function mount() {
-        // $this->initializeFilter('perPage', 'Number of items per page:',[
-        //     ['1', '1'],
-        //     ['5', '5'],
-        // ]);
-
-        $this->selectFirstEstablishment();
+    public function resetFilters(){
+   $this->acronym="";
+   $this->email="";
+   $this->name="";
     }
 
+    public function callUpdatedSelectedChoiceOnKeyDownEvent(){
+       $this->updatedSelectedChoice();
+    }
+
+    public function updatedSelectedChoice(){
+        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
+    }
     public function updated($property)
     {
         // $property: The name of the current property that was updated
-
-        if (($property === 'name' || $property==="acronym" || $property==="email") && count($this->establishments())===0) {
-            $this->setSelectedChoiceAndDispatchEvent('unkonwn');
+        if($property ==="excelFile"){
+            $this->whenExcelFileUploaded("EstablishmentImport",
+            __('tables.establishments.excel-upload-success-msg')
+        );
         }
-    }
-    public function selectFirstEstablishment()
-    {
-        try {
-            if ($this->selectedChoice === null && $this->establishments()->isNotEmpty()) {
-                $firstEstablishment = $this->establishments()[0];
-                if ($firstEstablishment) {
-                    $this->setSelectedChoiceAndDispatchEvent($firstEstablishment->id);
-                }
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('open-errors', [$e->getMessage()]);
+        if ($property === 'name' || $property==="acronym" || $property==="email") {
+            $this->selectedChoice="empty";
         }
     }
 
-    public function setSelectedChoiceAndDispatchEvent($choice)
-    {
-        $this->selectedChoice = $choice;
-
-        $this->dispatch('set-userable-id-Externally', $this->selectedChoice);
-    }
 
     #[Computed]
     public function establishments()
@@ -76,10 +66,16 @@ class EstablishmentsTable extends Component
             ->where('acronym', 'like', "%{$this->acronym}%")
             ->orderBy($this->sortBy, $this->sortDirection)
             ->get();
-
-
-
     }
+
+
+public function generateEmptyEstablishmentsSheet(){
+
+    return $this->generateEmptyExcelWithHeaders(  "establishments",
+        ["ABRÉVIATION DU NOM","NOM","EMAIL","ADRESSE","NUMÉRO DU FIX","NUMÉRO DU FAX"],
+      );
+}
+
 
     public function updatedPerPage()
     {
@@ -98,6 +94,9 @@ class EstablishmentsTable extends Component
 
 
 
+public function rendered(){
+    $this->dispatch('html-content-rendered')->self();
+}
 
 public function placeholder(){
 
@@ -106,6 +105,8 @@ public function placeholder(){
 
     public function render()
     {
+
+
         return view('livewire.admin.establishments-table');
     }
 }

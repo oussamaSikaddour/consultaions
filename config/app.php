@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'fr',
+    'locale' =>'ar',
     'available_locales' => [
         "en",
         "ar",
@@ -175,6 +175,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Ichtrojan\Otp\OtpServiceProvider::class,
         App\Providers\ConstantsServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -191,6 +192,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Otp' => Ichtrojan\Otp\Otp::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
 ];

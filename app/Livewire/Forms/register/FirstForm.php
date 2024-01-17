@@ -56,12 +56,12 @@ class FirstForm extends Form
     public function validationAttributes()
     {
         return [
-            'last_name' => 'nom',
-             'first_name' => 'prénom',
-             'birth_date' => 'date de naissance',
-             'email' => 'email',
-             'password' => 'mot de passe',
-             'tel' => 'numéro de téléphone',
+            'last_name' => __('forms.register.first-f.l-name'),
+             'first_name' => __('forms.register.first-f.f-name'),
+             'birth_date' => __('forms.register.first-f.b-date'),
+             'email' => __('forms.register.first-f.email'),
+             'password' =>__('forms.register.first-f.password'),
+             'tel' => __('forms.register.first-f.tel')
             // Add more attribute names as needed
         ];
     }
@@ -99,7 +99,7 @@ class FirstForm extends Form
 
                 return [
                     'status' => true,
-                    'success' => 'Un code de vérification a été envoyé à votre adresse e-mail',
+                    'success' => __('forms.register.first-f.success-txt'),
                 ];
             } catch (\Exception $e) {
                 return [

@@ -1,25 +1,27 @@
 <?php
 
 namespace App\Livewire;
+
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Errors extends Component
 {
     public $isOpen = false;
-
     public $errors = [];
 
     #[On('open-errors')]
     public function openErrors($errors)
     {
-        $this->errors = $errors;
-        $this->isOpen = true;
+        $this->toggleErrors($errors);
     }
 
-    public function closeErrors()
+    public function toggleErrors($errors=[])
     {
-        $this->isOpen = false;
+
+        $this->isOpen = !$this->isOpen;
+        $this->errors =count($errors)>0? $errors:[];
+        $this->dispatch("handle-errors-state");
     }
 
     public function render()

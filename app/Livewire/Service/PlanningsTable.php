@@ -3,17 +3,18 @@
 namespace App\Livewire\Service;
 
 use App\Models\Planning;
-use App\Traits\SortableTrait;
+use App\Traits\TableTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
 
 class PlanningsTable extends Component
 {
 
-    use WithPagination, SortableTrait;
+    use WithPagination, TableTrait;
 
     // Properties with default values
     #[Url()]
@@ -25,44 +26,38 @@ class PlanningsTable extends Component
     #[Url()]
     public $state = "";
     #[Url()]
-    public $selectedChoice = null;
+    public $selectedChoice ;
     public $serviceId = "";
 
 
 
+    public function resetFilters(){
+        $this->month="";
+        $this->name="";
+        $this->state="";
+}
+    public function callUpdatedSelectedChoiceOnKeyDownEvent(){
+        $this->updatedSelectedChoice();
+     }
 
 
-
+    public function updatedSelectedChoice(){
+        $this->dispatch('set-planning-id-externally',$this->selectedChoice);
+    }
 
 
     public function updated($property)
     {
         // $property: The name of the current property that was updated
-
-        if (($property === 'name' || $property === "year" ||
-             $property==="month" || $property === "state") && count($this->plannings())===0) {
-            $this->setSelectedChoiceAndDispatchEvent('unkonwn');
-        }
-    }
-    public function selectFirstPlanning()
-    {
-        try {
-            if ($this->selectedChoice === null && $this->plannings()->isNotEmpty()) {
-                $firstPlanning = $this->plannings()[0];
-                if ($firstPlanning) {
-                    $this->setSelectedChoiceAndDispatchEvent($firstPlanning->id);
-                }
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('open-errors', [$e->getMessage()]);
+        if ($property === 'name' || $property === "year" ||
+             $property==="month" || $property === "state") {
+            $this->selectedChoice = 'empty';
+            $this->updatedSelectedChoice();
         }
     }
 
-    public function setSelectedChoiceAndDispatchEvent($choice)
-    {
-        $this->selectedChoice = $choice;
-        $this->dispatch('set-planning-id-externally', $this->selectedChoice);
-    }
+
+
 
     #[Computed]
     public function plannings()
@@ -101,12 +96,21 @@ class PlanningsTable extends Component
     public function mount()
     {
 
-   $this->selectFirstPlanning();
+     $this->selectedChoice="empty";
     $this->year = date('Y');
-    // $this->month = date('m');
-    $this->initializeFilter('year', 'Année :',app('my_constants')['YEARS']);
-    $this->initializeFilter('month', 'Mois :',app('my_constants')['MONTHS_OPTIONS']);
-    $this->initializeFilter('state', 'Etat :',app('my_constants')['PLANNING_STATE']);
+    $this->month = date('n');
+    $this->initializeFilter(
+        'year',
+        __('tables.plannings.filters.year'),
+         app('my_constants')['YEARS']);
+    $this->initializeFilter(
+           'month',
+            __('tables.plannings.filters.month'),
+            app('my_constants')['MONTHS_OPTIONS'][app()->getLocale()]);
+    $this->initializeFilter(
+            'state',
+             __('tables.plannings.filters.state'),
+             app('my_constants')['PLANNING_STATE'][app()->getLocale()]);
     }
 
     public function placeholder(){

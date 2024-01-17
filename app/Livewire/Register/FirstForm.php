@@ -9,23 +9,17 @@ use Livewire\Component;
 class FirstForm extends Component
 {
 
-
+    public $registrationEmail;
     public RegisterFirstForm $form;
 
-    public function updated($property)
-    {
-     if($property ==="form.email"){
-        $this->dispatch('registration-email-set');
-     }
-    }
     public function handleSubmit()
     {
+
+        $this->registrationEmail = $this->form->email;
         $response =  $this->form->save();
        if ($response['status']) {
-           session(['registration_email' => $this->form->email]);
            $this->dispatch('open-toast', $response['success']); // Corrected the variable name
-           $this->dispatch('is-slide-updated', true);
-           config(['session.lifetime' => 20160]);
+           $this->dispatch('first-step-succeeded');
             $this->form->reset();
          }else{
             $this->dispatch('open-errors', [$response['error']]);

@@ -1,3 +1,3 @@
-<livewire:nav/>
+<x-nav />
 <x-hamburger-button/>
-<livewire:nav :forPhone=true />
+<x-nav-phone />

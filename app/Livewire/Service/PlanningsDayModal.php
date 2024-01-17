@@ -7,15 +7,17 @@ use App\Livewire\Forms\Service\UpdatePlanningDayForm;
 use App\Models\ConsultationPlace;
 use App\Models\Planning;
 use App\Models\PlanningDay;
+use App\Models\Service;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use App\Traits\TableTrait;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class PlanningsDayModal extends Component
 {
-      use GeneralTrait;
+      use GeneralTrait, TableTrait;
     public $planningId = null;
     public $specialty = "";
     public $doctorsOptions = [];
@@ -30,11 +32,12 @@ class PlanningsDayModal extends Component
     #[Computed()]
     public function doctors()
     {
+        if($this->specialty)
         if(session('establishment_id')){
             $this->establishmentId=(session('establishment_id'));
         }
         $users = User::where('userable_id',$this->establishmentId)->whereHas('occupations', function ($query) {
-            $query->where('entitled', 'doctor')->where('specialty', 'like', "%{$this->specialty}%");
+            $query->where('entitled', 'doctor')->where('specialty', $this->specialty);
         })->whereHas('occupations', function ($query) {
             // Only consider the first occupation
             $query->take(1);
@@ -51,12 +54,12 @@ class PlanningsDayModal extends Component
 
     public function updatedSpecialty()
     {
-        $this->populateDoctorsOptions($this->doctors());
+        $this->doctorsOptions = $this->populateDoctorsOptions($this->doctors());
     }
     public function mount()
     {
-        $this->populateDoctorsOptions($this->doctors());
-        $this->populateConsultationPlacesOptions($this->consultationsPlaces());
+
+
         if ($this->id !== "") {
             try {
                 $this->planningDay = PlanningDay::findOrFail($this->id);
@@ -72,6 +75,9 @@ class PlanningsDayModal extends Component
             }
         } else {
             try {
+
+                $service =Service::findOrFail(session('service_id'));
+                $this->specialty=$service->specialty;
                 $this->addForm->planning_id = $this->planningId;
                 $planning = Planning::findOrFail($this->planningId);
                  $minDateOfThePlanning = Carbon::createFromDate(
@@ -88,6 +94,9 @@ class PlanningsDayModal extends Component
                 $this->dispatch('open-errors', [$e->getMessage()]);
             }
         }
+
+       $this->doctorsOptions = $this->populateDoctorsOptions($this->doctors());
+       $this->consultationPlaceOptions= $this->populateConsultationPlacesOptions($this->consultationsPlaces());
     }
 
     public function handleSubmit()

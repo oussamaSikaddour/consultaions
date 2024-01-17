@@ -1,14 +1,22 @@
 @php
     $form = ($id !== '') ? 'updateForm' : 'addForm';
-    $specailtyOptionsdata = app('my_constants')['SPECIALTY_OPTIONS'];
+    $specailtyOptionsdata = app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()];
 @endphp
 
 <div class="form__container">
     <form class="form" wire:submit.prevent="handleSubmit">
 
         <div>
-            <x-input name="{{ $form }}.name" label="Nom du service" type="text" html_id="SFMName" />
-            <x-input name="{{ $form }}.head_of_service" label="Chef de service" type="text" html_id="SFMHeadOfS" />
+            <x-input
+            name="{{ $form }}.name"
+           :label="__('modals.service.name')"
+            type="text"
+            html_id="SFMName" />
+            <x-input
+             name="{{ $form }}.head_of_service"
+             :label="__('modals.service.head-service')"
+             type="text"
+             html_id="SFMHeadOfS" />
         </div>
         <div>
 
@@ -17,7 +25,7 @@
                 <x-selector
                  htmlId="ms-specialty"
                  name="{{ $form }}.specialty"
-                 label="spécialité :"
+               :label="__('modals.service.specialty')"
                  :data="$specailtyOptionsdata"
                  :showError="true"
                  />
@@ -27,7 +35,11 @@
             <div wire:loading>
                 <x-loading />
             </div>
-            <button type="submit" class="button button--primary">Valider</button>
+            <button
+                 type="submit"
+                 class="button button--primary">
+                 @lang("modals.common.submit-btn")
+            </button>
         </div>
     </form>
 </div>

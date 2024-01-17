@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Service;
 use App\Models\User;
-use App\Traits\SortableTrait;
+use App\Traits\TableTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Computed;
@@ -11,15 +12,10 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Font;
 
 class UsersTable extends Component
 {
-use WithPagination, SortableTrait;
+use WithPagination, TableTrait;
 #[Url()]
 public $fullName = "";
 #[Url()]
@@ -32,39 +28,38 @@ public $userableId=null;
 public $specialty="";
 #[Url()]
 public $email = "";
-public $noUserFoundMessage="Pour le moment, aucun utilisateur n'a été trouvé.";
+public $customNoUserFoundMessage;
+public $defaultNoUserFoundMessage;
 public $showForSuperAdmin=false;
 public $showForAdminService=false;
 
 
 
+public function resetFilters(){
+$this->fullName="";
+$this->specialty="";
+$this->email="";
+}
 
 public function mount()
 {
-
-
-
-
+$this->defaultNoUserFoundMessage= __('tables.users.not-found');
 if($this->userableType === "doctor"){
-    $this->initializeFilter('specialty', 'spécialité de service :',app('my_constants')['SPECIALTY_OPTIONS']);
+    $this->initializeFilter('specialty', __('tables.users.filters.specialty'),app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()]);
 }
 
 if($this->showForSuperAdmin  ){
     $this->initializeFilter(
         'userableType',
-        "type d'utilisateur :",
-        [
-            ['',"--- choisissez un type d'utilisateur ---"],
-            ['admin','administrateur'],
-            ['user','utilisateur'],
-            ['doctor','médecin'],
-            ['admin_place_of_consultation','administrateur du lieu de consultation'],
-            ['admin_establishment',"administrateur de l'établissement"],
-            ['admin_service','administrateur de service'],
-        ]
+        __('tables.users.filters.user-type'),
+        app("my_constants")["USER_TYPES"][app()->getLocale()]
 );
-}
 
+
+}
+$this->specialty = $this->showForAdminService
+                   ? Service::find(session('service_id'))->specialty
+                  : "";
 }
 #[On('set-userable-id-Externally')]
 public function setUserableIdExternally($selectedValue){
@@ -84,7 +79,7 @@ public function users()
             $query->where('userable_type', $this->userableType);
         }
 
-        if ($this->userableId !== null || !$this->showForSuperAdmin) {
+        if ($this->userableId || !$this->showForSuperAdmin) {
             $query->where('userable_id', $this->userableId);
         }
 
@@ -124,67 +119,19 @@ public function updatedPerPage()
     $this->resetPage();
 }
 
-public function generateExcel()
-{
-    // Your data retrieval logic, e.g., $tableData
-    $tableData = $this->users()->map(function ($user) {
-        return [
-            'Name' => $user->name,
-            'Email' => $user->email,
-             'Registerd At'=>$user->created_at,
-             'télephone'=>$user->tel,
-        ];
-    })->toArray();
-
-    try {
-        // Create a new spreadsheet
-        $spreadsheet = new Spreadsheet();
-        $activeWorksheet = $spreadsheet->getActiveSheet();
-
-        // Define styles for header row
-        $headerStyle = [
-            'font' => ['bold' => true],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'DDDDDD']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-        ];
-
-        // Add headers to the spreadsheet
-        $columnIndex = 'A';
-        foreach (array_keys($tableData[0]) as $header) {
-            $activeWorksheet->setCellValue($columnIndex . '1', $header);
-            $activeWorksheet->getStyle($columnIndex . '1')->applyFromArray($headerStyle);
-            $columnIndex++;
-        }
-
-        // Add data rows
-        $rowIndex = 2;
-        foreach ($tableData as $row) {
-            $columnIndex = 'A';
-            foreach ($row as $cellValue) {
-                $activeWorksheet->setCellValue($columnIndex . $rowIndex, $cellValue);
-                $columnIndex++;
-            }
-            $rowIndex++;
-        }
-
-        // Send the spreadsheet as a downloadable file
-        $writer = new Xlsx($spreadsheet);
-
-        return response()->stream(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
-            200,
-            [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="users.xlsx"',
-            ]
-        );
-    } catch (\Exception $e) {
-        // Handle errors and return an appropriate response
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
+public function generateUsersExcel(){
+    return $this->generateExcel(function() {
+        return $this->users()->map(function ($user) {
+            return [
+                __("tables.users.fullName")=> $user->name,
+                __("tables.users.email") => $user->email,
+                __("tables.users.registration-date") => $user->created_at->format('d/m/Y'),
+                __("tables.users.phone")=> $user->tel,
+            ];
+        })->toArray();
+    }, "users");
 }
+
 
 
 #[On("delete-user")]

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('doctor_id');
             $table->unsignedBigInteger('planning_day_id')->nullable();
+            $table->unsignedBigInteger('consultation_place_id')->nullable();
             $table->enum('type', ['normal', 'control'])->default('normal');
             $table->date('day_at');
             $table->string('specialty');
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->foreign('patient_id')->references('id')->on('medical_files')->onDelete('cascade');
             $table->foreign('doctor_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('planning_day_id')->references('id')->on('planning_days')->onDelete('cascade');
+            $table->foreign('consultation_place_id')->references('id')->on('consultation_places')->onDelete('cascade');
         });
     }
 

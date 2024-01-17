@@ -33,10 +33,9 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('admin-service-access', function ($user) {
-            $id = session('service_id') ?? request()->route('id');
-            if ($id !== null && $user->userable_type === UserableTypesEnum::SERVICE_TYPE && $user->userable_id == $id) {
-                // Set a session variable with establishment_id
-                session(['service_id' => $id]);
+            $id =  session('service_id') ;
+            if (
+            $id !== null  && $user->userable_type === UserableTypesEnum::SERVICE_TYPE && $user->userable_id == $id) {
                 return true;
             }
             return false;
@@ -44,10 +43,10 @@ class AuthServiceProvider extends ServiceProvider
 
 
         Gate::define('admin-establishment-access', function ($user) {
-            $id = session('establishment_id') ?? request()->route('id');
+
+
+             $id= session('establishment_id');
             if ($id !== null && $user->userable_type === UserableTypesEnum::ESTABLISHMENT_TYPE && $user->userable_id == $id) {
-                // Set a session variable with establishment_id
-                session(['establishment_id' => $id]);
                 return true;
             }
             return false;
@@ -56,10 +55,8 @@ class AuthServiceProvider extends ServiceProvider
 
 
         Gate::define('admin-place-of-consultation-access', function ($user) {
-            $id = session('consultation_place_id') ?? request()->route('id');
+            $id =   session('consultation_place_id');
             if ($id !== null && $user->userable_type === UserableTypesEnum::PLACE_OF_CONSULTATION_TYPE && $user->userable_id == $id) {
-                // Set a session variable with establishment_id
-                session(['consultation_place_id' => $id]);
                 return true;
             }
             return false;

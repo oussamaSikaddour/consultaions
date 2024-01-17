@@ -29,32 +29,21 @@ class ControlModal extends Component
     #[Computed()]
     public function consultationsPlaces()
     {
-   return  ConsultationPlace::where('daira',"like","%{$this->daira}%")->get(['id', 'name']);
+   return  ConsultationPlace::where('daira',$this->daira)->get(['id', 'name']);
     }
 
 
 
- public function populateConsultationPlacesOptions(){
-        $this->consultationPlaceOptions = $this->populateSelectorOption(
-            $this->consultationsPlaces(),
-            function ($cp) {
-                              return [$cp->id, $cp->name];
-                             },
-            "choisir un lieu de consultation");
-}
 
 
-    public function updated($property)
+    public function updatedDaira()
  {
-        if ($property === "daira"){
-            $this->consultationPlace="";
-            $this->populateConsultationPlacesOptions();
-        }
+    $this->consultationPlaceOptions= $this->populateConsultationPlacesOptions($this->consultationsPlaces());
 }
 
  public function mount()
  {
-$this->populateConsultationPlacesOptions();
+    $this->consultationPlaceOptions= $this->populateConsultationPlacesOptions($this->consultationsPlaces());
 try {
     $doctor = User::with('personnelInfo')->findOrFail($this->doctorId);
 

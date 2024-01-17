@@ -24,7 +24,7 @@ class UpdatePlanningForm extends Form
                 return $query->where('year', $this->year);
             })->ignore($this->id)],
             'service_id' => ['required', 'integer', 'exists:services,id'], // must be an existing service ID
-            'state' => ['nullable', 'string', Rule::in(['publié', 'non publié'])], // must be either "published" or "unpublished"
+            'state' => ['nullable', 'string', Rule::in(['published', 'not_published'])], // must be either "published" or "unpublished"
         ];
     }
 
@@ -32,11 +32,11 @@ class UpdatePlanningForm extends Form
     {
 
         return [
-            'year' => 'année',
-            'month' => 'mois',
-            'name' => 'nom',
+            'year' => __("modals.planning.year"),
+            'month' =>__("modals.planning.month"),
+            'name' => __("modals.planning.name"),
             'service_id' => 'service',
-            'state' => 'état'
+            'state' =>__("modals.planning.state")
         ];
     }
 
@@ -50,7 +50,7 @@ class UpdatePlanningForm extends Form
 
             return [
                 'status' => true,
-                'success' => 'Le planning a été mis à jour avec succès',
+                'success' => __("forms.planning.update.success-txt"),
             ];
         } catch (\Exception $e) {
             return [

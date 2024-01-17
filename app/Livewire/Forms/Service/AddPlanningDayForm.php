@@ -40,11 +40,11 @@ class AddPlanningDayForm extends Form
             public function validationAttributes()
             {
                 return [
-                    'day_at' => 'date de consultation',
-                    'doctor_id' => 'medecin',
+                    'day_at' => __("modals.planning-day.date"),
+                    'doctor_id' =>__("modals.planning-day.doctor"),
                     'planning' => 'planning',
-                    'consultation_place_id' => 'lieu de la consultation',
-                    'number_of_consultation' => 'nombre maximum de rendez-vous',
+                    'consultation_place_id' =>__("modals.planning-day.c-place"),
+                    'number_of_consultation' =>__("modals.planning-day.c-number"),
                     // 'number_of_rendez_vous' => 'Nombre de rendez-vous confirmés',
                 ];
             }
@@ -57,7 +57,7 @@ class AddPlanningDayForm extends Form
             PlanningDay::create($validatedData);
             return [
                 'status' => true,
-                'success' => 'La journée de planification a été créée avec succès',
+                'success' =>__('forms.planning-day.add.success-txt'),
             ];
         } catch (\Exception $e) {
             return [

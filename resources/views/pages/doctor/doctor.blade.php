@@ -6,6 +6,7 @@
      :showForDoctor="true" :doctorId="$userId"/>
      <livewire:rendezvous-table
       lazy
-     :doctorId="$userId" :showMoreDetails="true"  :dontShowForDoctor="true"/>
+     :doctorId="$userId"
+     :showForDoctor="true"/>
   </section>
 @endsection

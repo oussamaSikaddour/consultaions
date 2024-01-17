@@ -5,7 +5,7 @@
     <div>
 
         <livewire:open-modal-button
-        title="Ajouter Un lieu de consultation"
+        :title="__('pages.consultation-places.add-cp-btn-txt')"
         classes="button--primary"
         content="<i class='fa-solid fa-hospital'></i>"
         :data="$modalData"
@@ -18,7 +18,7 @@
       />
      <livewire:users-table
      lazy
-     noUserFoundMessage="Aucun administrateur trouvé pour le lieu de consultation sélectionné pour le moment"
+     :customNoUserFoundMessage="__('pages.consultation-places.no-cp-agent-found-txt')"
      userableType="admin_place_of_consultation"
      />
   <div>

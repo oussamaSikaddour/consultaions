@@ -1,10 +1,7 @@
 <?php
 
 namespace App\Livewire\Forms\Login;
-
-use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Rule;
 use Livewire\Form;
 
 class LoginForm extends Form
@@ -26,8 +23,8 @@ class LoginForm extends Form
     {
         return [
 
-            'email' => 'email',
-            'password' => 'mot de passe',
+            'email' => __('forms.login.email'),
+            'password' => __('forms.login.password'),
             // Add more attribute names as needed
         ];
     }
@@ -46,28 +43,15 @@ class LoginForm extends Form
                 if (Auth::attempt($data)) {
                    session()->regenerate();
                   $user = Auth::user();
-
-                if ($user->userable_type === "admin_service") {
-                // Find the associated service using userable_id
-                      $service = Service::with('establishment')->where('id', $user->userable_id)->first();
-                    if ($service) {
-                    // Retrieve information about the establishment associated with the service
-                       $establishment = $service->establishment;
-                       if ($establishment) {
-                        // Set a session key 'establishment_id' with the establishment's ID
-                           session(['establishment_id' => $establishment->id]);
-                        }
-                     }
-                   }
-                   $routeInfo = $user->getRouteBasedOnUserableType();
+                   $route = $user->getRouteBasedOnUserableType();
                     return  [
                        'status'=>true,
-                       'data'=> $routeInfo
+                       'data'=> $route
                      ];
                    } else {
                   return [
                     'status' => false,
-                       'error' => "Aucun utilisateur correspondant trouvé avec l'e-mail et le mot de passe fournis",
+                       'error' => __('forms.login.no-user-err'),
                    ];
                    }
 
