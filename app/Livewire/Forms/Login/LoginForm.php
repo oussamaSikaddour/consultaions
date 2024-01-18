@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms\Login;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Form;
 
 class LoginForm extends Form
@@ -34,27 +35,33 @@ class LoginForm extends Form
 
     public function save()
     {
-        // // Validate the data
+        // Validate the data
         $data = $this->validate();
 
+        if (RateLimiter::tooManyAttempts('login', 5, 10)) {
+            return [
+                'status' => false,
+                'error' => __('forms.login.too-many-attempts'),
+            ];
+        }
 
         try {
+            if (Auth::attempt($data)) {
+                session()->regenerate();
+                $user = Auth::user();
+                $route = $user->getRouteBasedOnUserableType();
+                return [
+                    'status' => true,
+                    'data' => $route
+                ];
+            } else {
+                RateLimiter::hit('login');
 
-                if (Auth::attempt($data)) {
-                   session()->regenerate();
-                  $user = Auth::user();
-                   $route = $user->getRouteBasedOnUserableType();
-                    return  [
-                       'status'=>true,
-                       'data'=> $route
-                     ];
-                   } else {
-                  return [
+                return [
                     'status' => false,
-                       'error' => __('forms.login.no-user-err'),
-                   ];
-                   }
-
+                    'error' => __('forms.login.no-user-err'),
+                ];
+            }
         } catch (\Exception $e) {
             return [
                 'status' => false,

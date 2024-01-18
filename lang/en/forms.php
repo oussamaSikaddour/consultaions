@@ -9,7 +9,8 @@
             'password'=>"Password",
             "forget-password-link"=>"Forgot your password ?",
             "register-link"=>"Create an account",
-            "no-user-err"=>"No matching users found with provided email and password"
+            "no-user-err"=>"No matching users found with provided email and password",
+            "too-many-attempts"=>"You have made too many attempts. Please try again in a few minutes."
           ],
      "register"=>[
         "first-f"=>[

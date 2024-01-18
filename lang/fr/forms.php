@@ -9,7 +9,8 @@ return [
         'password'=>"Mot de passe",
         "forget-password-link"=>"Mot de passe oublié ?",
         "register-link"=>"Créer un compte",
-        "no-user-err"=>"Aucun utilisateur correspondant trouvé avec l'email et le mot de passe fournis"
+        "no-user-err"=>"Aucun utilisateur correspondant trouvé avec l'email et le mot de passe fournis",
+        "too-many-attempts"=>"Votre tentative de connexion est temporairement bloquée en raison de tentatives répétées infructueuses. Veuillez réessayer dans quelques minutes."
     ],
 
     "register"=>[
