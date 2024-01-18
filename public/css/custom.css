@@ -1978,11 +1978,7 @@ table th > div {
 .lang__menu__container.phone .lang__menu {
   background-color: #3c757e;
 }
-@media (min-width: 48em) {
-  .lang__menu__container.phone {
-    display: none;
-  }
-}
+
 .lang__menu__container.phone .lang__btn {
   box-shadow: var(--div-shadow);
   background-color: #3c757e;
