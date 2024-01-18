@@ -25,7 +25,7 @@
             html_id="EFEmail" />
             <x-input
              name="{{ $form }}.address"
-             label="l'adresse"
+             :label="__('modals.establishment.address')"
              type="text"
              html_id="EFAdresseq" />
         </div>
