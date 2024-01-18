@@ -53,9 +53,6 @@ label.addEventListener('keydown', (e) => {
         @this.updateRolesOnKeydownEvent(roleChoicesInputs[index].value)
       }
     })
-label.addEventListener('click', (e) => {
-    toggleCheckbox(roleChoicesInputs[index])
-  });
 });
 
 </script>

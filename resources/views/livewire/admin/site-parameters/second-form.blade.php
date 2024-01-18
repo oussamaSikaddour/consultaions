@@ -55,9 +55,6 @@ label.addEventListener('keydown', (e) => {
         @this.updateMaintenanceOnKeydownEvent(siteStatesInputs[index].value)
       }
     })
-  label.addEventListener('click', (e) => {
-    checkRadio(siteStatesInputs[index])
-  });
 });
 
 </script>
