@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' =>'ar',
+    'locale' =>'fr',
     'available_locales' => [
         "en",
         "ar",
