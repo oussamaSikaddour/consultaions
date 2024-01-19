@@ -11,7 +11,7 @@ return [
         "b-date" => "Date de naissance",
         "email" => "Email",
         "tel" => "Numéro de téléphone",
-        "h3" => "L'email doit être valide, un code de vérification y sera envoyé",
+        "h3" => "L'email doit être validé, un code de vérification y sera envoyé",
         "for" => [
             "add-super-admin" => "Ajouter un Super Admin",
             "add-coord-service" => "Ajouter un coordinateur de service",
@@ -51,7 +51,7 @@ return [
 
     "c-place" => [
 
-        "name" => "Nom du lieu des consultations",
+        "name" => "Nom du lieu de consultations",
         "address" => "Adresse",
         "land-line-number" => "Numéro de téléphone fixe",
         "fax-number" => "Numéro de fax",
@@ -59,8 +59,8 @@ return [
         "latitude"=>"Latitude",
         "longitude"=>"Longitude",
         "for" => [
-            "add" => "Ajouter un lieu des consultations",
-            "update" => "Mettre à jour le lieu des consultations"
+            "add" => "Ajouter un lieu de consultations",
+            "update" => "Mettre à jour le lieu de consultations"
         ]
     ],
 
@@ -83,23 +83,23 @@ return [
 
      ],
      "planning-day"=>[
-        "doctor-c-place-err" => "Vous ne pouvez pas ajouter un jour de planification pour le moment. Vous devez ajouter au moins un médecin et un lieu de consultation.",
+        "doctor-c-place-err" => "Vous ne pouvez pas ajouter un jour de planning pour le moment. Vous devez ajouter au moins un médecin et un lieu de consultations.",
         "doctor-err" => "Vous ne pouvez pas ajouter un jour de planification pour le moment. Vous devez ajouter au moins un médecin.",
-        "c-place-err" => "Vous ne pouvez pas ajouter un jour de planification pour le moment. Vous devez ajouter au moins un lieu de consultation.",
+        "c-place-err" => "Vous ne pouvez pas ajouter un jour de planification pour le moment. Vous devez ajouter au moins un lieu de consultations.",
         "specialty" => "Spécialité :",
         "doctor" => "Médecin :",
         "c-place" => "Lieu de consultations :",
         "date" => "La Date",
         "c-number" => "Nombre de consultations",
         "for" => [
-            "add" => "Ajouter un jour de planification",
-            "update" => "Mettre à jour le jour de planification",
+            "add" => "Ajouter un jour de planning",
+            "update" => "Mettre à jour le jour de planning",
         ],
     ],
     "rendez-vous" => [
         "date" => "Date du rendez-vous",
-        "start-d" => "Date de début",
-        "end-d" => "Date de fin",
+        "start-d" => "Date du début",
+        "end-d" => "Date de la fin",
         "specialty" => "Spécialité :",
         "doctor" => "Médecin :",
         "daira" => "Daïra :",
@@ -113,7 +113,7 @@ return [
         "already-have-r-with-specialty" => "Vous avez déjà un rendez-vous à venir avec cette spécialité. Veuillez choisir une autre spécialité ou attendre votre rendez-vous.",
         "intro" => "Pour voir la liste des rendez-vous disponibles",
         "first-instruction" => "Choisissez une spécialité médicale.",
-        "second-instruction" => "Sélectionnez au moins une daïra et un lieu de consultation.",
+        "second-instruction" => "Sélectionnez au moins une daïra et un lieu de consultations.",
         "third-instruction" => "Sélectionnez au moins un médecin.",
         "fourth-instruction" => "Vous pouvez modifier la période comme vous le souhaitez :",
         "fifth-instruction" => "Veuillez noter que lettre d'orientation est requise en format photo :",

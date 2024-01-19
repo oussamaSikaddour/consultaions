@@ -15,7 +15,7 @@ return [
 
     "register"=>[
         "first-f"=>[
-            "instruction"=>"Votre email doit être valide, un code de vérification vous sera envoyé",
+            "instruction"=>"Votre email doit être validé, un code de vérification vous sera envoyé",
             "login-link"=>"J'ai déjà un compte",
             "l-name"=>"Nom de famille",
             "f-name"=>"Prénom",
@@ -36,7 +36,7 @@ return [
 ,
     "forget-pwd"=>[
         "first-f"=>[
-            "instruction"=>"Votre email doit être valide, un code de vérification vous sera envoyé",
+            "instruction"=>"Votre email doit être validé, un code de vérification vous sera envoyé",
             "email"=>"Email",
             "success-txt"=>"Un code de vérification a été envoyé à votre adresse e-mail"
         ],
@@ -103,18 +103,18 @@ return [
                     ],
             "planning" => [
                 "add" => [
-                     "success-txt" => "La planification a été créée avec succès",
+                     "success-txt" => "Le planning a été créé avec succès",
                 ],
                 "update" => [
-                     "success-txt" => "La planification a été mise à jour avec succès",
+                     "success-txt" => "Le planning a été mis à jour avec succès",
                 ]
                 ],
             "planning-day" => [
                     "add" => [
-                        "success-txt" => "La journée de planification a été créée avec succès",
+                        "success-txt" => "Le jour du planning a été créé avec succès",
                     ],
                     "update" => [
-                        "success-txt" => "La journée de planification a été mise à jour avec succès",
+                        "success-txt" => "La jour du planning a été mis à jour avec succès",
                     ]
                     ],
           "m-file" => [

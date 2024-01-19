@@ -80,8 +80,8 @@ class AddUserForm extends Form
 
         try {
             return DB::transaction(function () use ($data) {
-                $password = Str::password(8,symbols:false);
-
+                // $password = Str::password(8,symbols:false);
+                $password="test=test";
                 $default = [
                     "name" => $data['last_name'] . " " . $data['first_name'],
                     'email' => $data['email'],
@@ -111,7 +111,7 @@ class AddUserForm extends Form
                     ];
                     Occupation::create($occupation);
                 }
-                event(new GeneratePasswordEvent($user, $password));
+                // event(new GeneratePasswordEvent($user, $password));
                 $defaultRoleSlugs = [config('defaultRole.default_role_slug', 'user')];
                 if ($this->userable_type === "admin") {
                     $defaultRoleSlugs = ['user', 'admin'];

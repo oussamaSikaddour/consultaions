@@ -2,9 +2,9 @@
 
 return [
     'landing'=> [
-        'page-title'=>"Page d'accueil",
+        'page-title'=>"Accueil",
         'main-title'=>'Des spécialistes à portée de main.',
-        'welcome-text'=>" Réservez facilement vos consultations avec des spécialistes via notre         plateforme. Simplifiez votre accès aux soins et bénéficiez d'un parcours médical fluide et efficace. Votre santé mérite une expérience simplifiée et sans tracas",
+        'welcome-text'=>" Réservez facilement vos consultations avec des spécialistes via notre plateforme. Simplifiez votre accès aux soins et bénéficiez d'un parcours médical fluide et efficace. Votre santé mérite une expérience simplifiée et sans tracas",
         "text-button-auth"=>"Mes rendez-vous",
         "text-button-guest"=>"S'inscrire"
     ],
@@ -56,8 +56,8 @@ return [
         'coord-not-fount-txt'=>"Aucun coordinateur trouvé pour ce service"
     ],
     'consultation-places'=> [
-        'page-title'=>"Lieux des consultations",
-        'add-cp-btn-txt'=>"Ajouter un lieu des consultations",
+        'page-title'=>"Lieux de consultations",
+        'add-cp-btn-txt'=>"Ajouter un lieu de consultations",
         'no-cp-agent-found-txt'=>"Aucun coordinateur trouvé pour le lieu de consultations sélectionné pour le moment"
     ],
     'services'=> [
