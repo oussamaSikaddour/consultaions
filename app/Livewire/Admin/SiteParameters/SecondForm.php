@@ -17,32 +17,25 @@ class SecondForm extends Component
 
     public function downloadDatabase()
     {
-        try{
+        try {
+            // Empty the Consultations directory, preserving the directory itself
+            Storage::disk('local')->deleteDirectory('Consultations', true);
 
-            if (Storage::disk('local')->exists('Consultations')) {
-                Storage::deleteDirectory('Consultations');
-            }
+            $projectPath = base_path();
+            $command = "php {$projectPath}/artisan backup:run";
+            $process = Process::fromShellCommandline($command);
+            $process->mustRun();
 
-        $projectPath = base_path(); // This fetches the root path of your Laravel application
-        // Construct the command
-        $command = "php {$projectPath}/artisan backup:run";
+            $backupFiles = Storage::disk('local')->files('Consultations');
+            $latestBackup = end($backupFiles);
 
-        // Execute the command to perform the backup
-        $process = Process::fromShellCommandline($command);
-        $process->mustRun();
+            return Storage::download($latestBackup);
 
-        // Retrieve the latest backup file
-        $backupFiles = Storage::disk('local')->files('Consultations');
-        $latestBackup = end($backupFiles); // Assuming the latest backup is the last file
-
-        // Provide a download link for the latest backup and delete after download
-        return Storage::download($latestBackup);
-
-    } catch (\Exception $e) {
-        // Handle exceptions
-        $this->dispatch('open-errors', [$e->getMessage()]);
+        } catch (\Exception $e) {
+            $this->dispatch('open-errors', [$e->getMessage()]);
+        }
     }
-    }
+
 
 
     public function updateMaintenanceOnKeydownEvent($state){
