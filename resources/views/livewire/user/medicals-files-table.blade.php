@@ -66,6 +66,7 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
           <thead>
              <tr>
                 <th></th>
+                <th scope="column"><div>actions</div></th>
              <x-sortable-th
              wire:key="mft-TH-1"
               name="code"
@@ -96,7 +97,6 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
              name="created_at"
              :label="__('tables.m-files.creation-date')"
              :$sortDirection :$sortBy/>
-             <th scope="column"><div>actions</div></th>
              </tr>
           </thead>
           <tbody>
@@ -113,67 +113,68 @@ $showForDoctor= isset($showForDoctor) ? $showForDoctor:false;
                       wire:key="{{ 'mf-key-'.$mf->id }}"
                     />
                 </td>
+                <td>
+
+                    @if($showForDoctor)
+
+                    <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
+                        content="<i class='fa-solid fa-calendar'></i>"
+                        :data='[
+                               "title" => "modals.rendez-vous.for.add-control",
+                               "component" => [
+                                               "name" => "control-modal",
+                                               "parameters" => [
+                                                "medicalFileId"=> $mf->id,
+                                                "doctorId"=>$doctorId ? $doctorId:""
+                                                ]
+                                                ]
+                                ]'
+                           />
+                    @else
+
+                    @if($mf->rendez_vous_count === 0)
+                    <livewire:open-dialog-button wire:key="'o-d-mfd-'.{{ $mf->id }}" classes="rounded"
+                        content="<i class='fa-solid fa-trash'></i>"
+                        :data='[
+                                 "question" => "dialogs.title.m-file",
+                                 "details" =>["m-file", $mf->code],
+                                 "actionEvent"=>[
+                                                 "event"=>"delete-medical-file",
+                                                 "parameters"=>$mf
+                                                 ]
+                                 ]'
+                         />
+                        @endif
+                   <livewire:open-modal-button wire:key="'pd-b-mf-'.{{ $mf->id }}" classes="rounded"
+                    content="<i class='fa-solid fa-pen-to-square'></i>"
+                    :data='[
+                             "title" => "modals.m-file.for.update",
+                             "component" => [
+                                              "name" => "user.medical-file-modal",
+                                               "parameters" => ["id"=>$mf->id]
+                                            ]
+                           ]'
+                     />
+                     <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
+                        content="<i class='fa-solid fa-calendar'></i>"
+                        :data='[
+                               "title" => "modals.rendez-vous.for.add",
+                               "component" => [
+                                               "name" => "rendezvous-modal",
+                                               "parameters" => [
+                                                "medicalFileId"=> $mf->id
+                                                ]
+                                                ]
+                                ]'
+                           />
+                    @endif
+                </td>
              <td>{{ $mf->code}}</td>
              <td>{{ $mf->last_name}}</td>
              <td>{{ $mf->first_name}}</td>
              <td>{{ $mf->birth_date}}</td>
              <td>{{ $mf->tel}}</td>
              <td>{{ $mf->created_at->format('d/m/Y')}}</td>
-            <td>
-
-                @if($showForDoctor)
-
-                <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
-                    content="<i class='fa-solid fa-calendar'></i>"
-                    :data='[
-                           "title" => "modals.rendez-vous.for.add-control",
-                           "component" => [
-                                           "name" => "control-modal",
-                                           "parameters" => [
-                                            "medicalFileId"=> $mf->id,
-                                            "doctorId"=>$doctorId ? $doctorId:""
-                                            ]
-                                            ]
-                            ]'
-                       />
-                @else
-
-                @if($mf->rendez_vous_count === 0)
-                <livewire:open-dialog-button wire:key="'o-d-mfd-'.{{ $mf->id }}" classes="rounded"
-                    content="<i class='fa-solid fa-trash'></i>"
-                    :data='[
-                             "question" => "dialogs.title.m-file",
-                             "details" =>["m-file", $mf->code],
-                             "actionEvent"=>[
-                                             "event"=>"delete-medical-file",
-                                             "parameters"=>$mf
-                                             ]
-                             ]'
-                     />
-                    @endif
-               <livewire:open-modal-button wire:key="'pd-b-mf-'.{{ $mf->id }}" classes="rounded"
-                content="<i class='fa-solid fa-pen-to-square'></i>"
-                :data='[
-                         "title" => "modals.m-file.for.update",
-                         "component" => [
-                                          "name" => "user.medical-file-modal",
-                                           "parameters" => ["id"=>$mf->id]
-                                        ]
-                       ]'
-                 />
-                 <livewire:open-modal-button wire:key="'o-pd-pl-d-'.{{ $mf->id }}"            classes="rounded"
-                    content="<i class='fa-solid fa-calendar'></i>"
-                    :data='[
-                           "title" => "modals.rendez-vous.for.add",
-                           "component" => [
-                                           "name" => "rendezvous-modal",
-                                           "parameters" => [
-                                            "medicalFileId"=> $mf->id
-                                            ]
-                                            ]
-                            ]'
-                       />
-                @endif
 
          </tr>
        @endforeach

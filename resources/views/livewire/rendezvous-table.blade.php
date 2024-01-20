@@ -79,6 +79,7 @@
       <table>
           <thead>
              <tr>
+                <th scope="column"><div>actions</div></th>
              <x-sortable-th wire:key="rt-TH-1"
              name="code"
              :label="__('tables.rendez-vous.mf-code')"
@@ -133,12 +134,27 @@
              name="cp_name"
              :label="__('tables.rendez-vous.c-place')"
               :$sortDirection :$sortBy/>
-             <th scope="column"><div>actions</div></th>
              </tr>
           </thead>
           <tbody>
             @foreach ($this->rendezVous as $r)
             <tr wire:key="{{ $r->id }}-rdt" scope="row">
+                <td>
+                    @if($r->referralLetter && $r->referralLetter->url)
+                    <livewire:open-modal-button
+                    wire:key="'o-i-r-M-'.{{ $r->id }}"
+                    classes="rounded"
+                    content="<i class='fa-solid fa-file'></i>"
+                    :data='[
+                       "type" => "simple_img",
+                       "title" => "lettre oriontation",
+                       "component" =>  $r->referralLetter->url
+                      ]'
+                     />
+
+                @endif
+
+                 </td>
             <td>{{ $r->code}}</td>
             <td>{{ $r->patient_last_name}}</td>
             <td>{{ $r->patient_first_name}}</td>
@@ -150,22 +166,7 @@
             <td>{{ $r->doctor_email }}</td>
             <td>{{ $r->establishment_name }}</td>
             <td>{{ $r->cp_name}}</td>
-            <td>
-                 @if($r->referralLetter && $r->referralLetter->url)
-                 <livewire:open-modal-button
-                 wire:key="'o-i-r-M-'.{{ $r->id }}"
-                 classes="rounded"
-                 content="<i class='fa-solid fa-file'></i>"
-                 :data='[
-                    "type" => "simple_img",
-                    "title" => "lettre oriontation",
-                    "component" =>  $r->referralLetter->url
-                   ]'
-                  />
 
-             @endif
-
-              </td>
               </tr>
             @endforeach
         </tbody>
@@ -174,6 +175,7 @@
       <table>
         <thead>
            <tr>
+            <th scope="column"><div>actions</div></th>
            <x-sortable-th
            wire:key="rt-TH-4"
            name="day_at"
@@ -204,37 +206,36 @@
            name="cp_name"
            :label="__('tables.rendez-vous.c-place')"
            :$sortDirection :$sortBy/>
-           <th scope="column"><div>actions</div></th>
            </tr>
         </thead>
         <tbody>
           @foreach ($this->rendezVous as $r)
           <tr wire:key="{{ $r->id }}-rdt" scope="row">
+            <td>
+                <livewire:open-dialog-button wire:key="'o-d-rd-'.{{ $r->id }}" classes="rounded"
+                    content="<i class='fa-solid fa-trash'></i>"
+                    :data='[
+                             "question" => "dialogs.title.rendez-vous",
+                             "details" =>["rendez-vous", $r->day_at],
+                             "actionEvent"=>[
+                                             "event"=>"delete-rendez-vous",
+                                              "parameters"=>$r
+                                             ]
+                             ]'
+                     />
+                  <button class="button rounded" wire:click="printConfirmationPdf({{ $r }})">
+                      <i class="fa-solid fa-file-pdf"></i>
+                  </button>
+                  <x-open-google-map
+                  latitude="{{ $r->cp_latitude }}"
+                 longitude="{{ $r->cp_longitude }}" />
+                  </td>
           <td>{{ $r->day_at}}</td>
           <td>{{ app('my_constants')['RENDEZ_VOUS_TYPE'][app()->getLocale()][$r->type]}}</td>
           <td>{{ app('my_constants')['SPECIALTY_OPTIONS'][app()->getLocale()][$r->specialty]}}</td>
           <td>{{ $r->doctor_name }}</td>
           <td>{{ $r->establishment_name }}</td>
           <td>{{ $r->cp_name}}</td>
-          <td>
-          <livewire:open-dialog-button wire:key="'o-d-rd-'.{{ $r->id }}" classes="rounded"
-              content="<i class='fa-solid fa-trash'></i>"
-              :data='[
-                       "question" => "dialogs.title.rendez-vous",
-                       "details" =>["rendez-vous", $r->day_at],
-                       "actionEvent"=>[
-                                       "event"=>"delete-rendez-vous",
-                                        "parameters"=>$r
-                                       ]
-                       ]'
-               />
-            <button class="button rounded" wire:click="printConfirmationPdf({{ $r }})">
-                <i class="fa-solid fa-file-pdf"></i>
-            </button>
-            <x-open-google-map
-            latitude="{{ $r->cp_latitude }}"
-           longitude="{{ $r->cp_longitude }}" />
-            </td>
             </tr>
           @endforeach
       </tbody>

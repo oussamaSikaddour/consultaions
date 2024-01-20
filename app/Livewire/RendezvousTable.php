@@ -19,7 +19,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Mpdf\Mpdf;
+use PDF;
 
 class RendezvousTable extends Component
 {
@@ -224,15 +224,10 @@ public function generateRendezVousExcel(){
 public function printConfirmationPdf($rendezVousData)
 {
    try {
-        $mpdf = new Mpdf();
-        $html = view("pdfs.".app()->getLocale() .".rendez-vous", compact('rendezVousData'))->render();
-        $mpdf->WriteHTML($html);
+        $pdf = PDF::loadView("pdfs." . app()->getLocale() . ".rendez-vous", compact('rendezVousData'));
         $tempDir = storage_path('app/temp/');
-        if (!File::isDirectory($tempDir)) {
-            File::makeDirectory($tempDir, 0755, true, true); // Create the directory recursively
-        }
         $tempFilePath = $tempDir . 'rendezvous.pdf';
-        $mpdf->Output($tempFilePath, \Mpdf\Output\Destination::FILE);
+        $pdf->save($tempFilePath);
         return response()->download($tempFilePath, 'rendezvous.pdf')
             ->deleteFileAfterSend(true);
     } catch (\Exception $e) {
