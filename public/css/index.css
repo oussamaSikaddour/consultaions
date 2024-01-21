@@ -1398,20 +1398,12 @@ input[type=radio]:checked:disabled + label:before {
 table {
   margin: 0 auto;
   padding: 0;
-  min-width: -moz-fit-content;
-  min-width: fit-content;
 }
 table thead {
   z-index: 2;
   position: sticky;
   top: 0;
   left: 0;
-  min-width: -moz-fit-content;
-  min-width: fit-content;
-}
-table tbody {
-  min-width: -moz-fit-content;
-  min-width: fit-content;
 }
 table tr {
   background-color: var(--clr-light);
@@ -1446,9 +1438,9 @@ table th, table td {
   font-size: var(--fs);
   text-align: left;
   height: 5rem;
-  text-wrap: nowrap;
-  min-width: -moz-fit-content;
-  min-width: fit-content;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 table td {
   font-size: var(--fs);
