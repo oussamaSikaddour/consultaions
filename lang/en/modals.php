@@ -20,7 +20,6 @@ return [
         "add-admin-establishment"=>"Add Establishment Administrator",
          "update-user"=>"Update "
     ]
-
  ],
 
  "role"=>[
@@ -61,7 +60,6 @@ return [
         "add"=>"Add Consultations Place",
         "update"=>"Update Consultations Place"
     ],],
-
     "m-file"=>[
         "birth-d"=>"Birth Date",
         "l-name" =>"Last Name",
@@ -83,9 +81,7 @@ return [
             "update"=>"Update Planning"
         ],
      ],
-
      "planning-day"=>[
-
         "doctor-c-place-err"=>"you cannot add a scheduling day at the moment, you must add at least one doctor and one consultation location",
         "doctor-err"=>"you cannot add a scheduling day at the moment, you must add at least one doctor",
         "c-place-err"=>"you cannot add a planning day at the moment, you must add at least one consultation location",
@@ -122,8 +118,7 @@ return [
     "fourth-instruction"=>"You can change the period as you wish :",
     "fifth-instruction"=>"Please note that the orientation letter is required in photo format :",
     "not-found"=>"There are no appointments available at the moment ",
-    "letter-type-err"=>"Orientation letter must be in image format"
-
+    "letter-type-error"=>"Orientation letter must be in image format"
   ]
 
 ];

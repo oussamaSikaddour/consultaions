@@ -118,6 +118,6 @@ return [
         "fourth-instruction" => "Vous pouvez modifier la période comme vous le souhaitez :",
         "fifth-instruction" => "Veuillez noter que lettre d'orientation est requise en format photo :",
         "not-found" => "Il n'y a pas de rendez-vous disponibles pour le moment.",
-        "letter-type-err" => "lettre d'orientation doit être au format image."
+        "letter-type-error" => "lettre d'orientation doit être au format image."
     ],
 ];

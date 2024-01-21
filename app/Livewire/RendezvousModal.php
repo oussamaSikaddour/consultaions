@@ -120,7 +120,7 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
          try{
             $this->temporaryImageUrl = $this->form->referral_letter->temporaryUrl();
          }catch (\Exception $e) {
-            $this->dispatch('open-errors', [__('modals.rendez-vous.letter-type-error')]);
+            $this->dispatch('open-errors', [   "message" =>__('modals.rendez-vous.letter-type-error')]);
         }
        }
         if ($property === "form.specialty"){
@@ -167,8 +167,6 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
 
     public function mount()
     {
-
-
         $this->doctorsOptions= [""=>"-- choisir un medecin --"];
         $this->consultationPlaceOptions = [""=>"-- choisir un lieu de consultation --"];
 
