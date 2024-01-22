@@ -982,8 +982,19 @@ input[type=radio]:checked:disabled + label:before {
   align-items: center;
   background-color: var(--clr-light);
 }
+.nav__logo {
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+}
 .nav__logo:focus {
   border: 0.2rem solid #105a5d;
+}
+.nav__logo img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .nav__addons {
   height: 100%;
@@ -1398,6 +1409,7 @@ input[type=radio]:checked:disabled + label:before {
 table {
   margin: 0 auto;
   padding: 0;
+  min-width: 100%;
 }
 table thead {
   z-index: 2;
@@ -1637,7 +1649,7 @@ table th > div {
 }
 
 .menu {
-  position: absolute;
+  position: fixed;
   top: 5.6rem;
   left: 0;
   width: 27rem;
@@ -1682,6 +1694,10 @@ table th > div {
 }
 .menu__item a:focus {
   border: 0.3rem solid black;
+}
+.menu__item span:first-of-type {
+  margin-left: auto;
+  margin-right: 1rem;
 }
 .menu.open {
   transform: translateX(0);
@@ -2014,6 +2030,23 @@ table th > div {
 }
 .toolTip.show {
   display: flex;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.2rem solid #17843f;
+  background-color: #22c55e;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  color: white;
+}
+.badge__danger {
+  border-color: #9c1919;
+  background-color: #dc2626;
+}
+.badge__warning {
+  border-color: #ac6f07;
+  background-color: #f59e0b;
 }
 
 .chatBox {
