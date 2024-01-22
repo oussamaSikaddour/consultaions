@@ -57,6 +57,14 @@ label.addEventListener('keydown', (e) => {
     })
 });
 
+
+
+
+      $wire.on('form-submitted',()=>{
+        const secondForm = document.querySelector("form--2")
+        clearErrorsOnFocus(secondForm)
+         })
+
 </script>
 
 

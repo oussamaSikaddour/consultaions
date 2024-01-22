@@ -35,3 +35,13 @@
 
 
   </form>
+
+
+
+  @script
+  <script>
+      $wire.on('form-submitted',()=>{
+        clearErrorsOnFocus()
+         })
+  </script>
+  @endscript

@@ -19,6 +19,7 @@ class ChangePassword extends Component
 
     public function handelSubmit()
     {
+        $this->dispatch('form-submitted');
         $response = $this->form->save();
         if ($response['status']) {
             // Redirect to the "logout" route by name

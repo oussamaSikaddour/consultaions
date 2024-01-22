@@ -12,6 +12,7 @@ class FirstForm extends Component
  public SiteParametersFirstForm $form;
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response =  $this->form->save();
        if ($response['status']) {
            $this->dispatch('open-toast', $response['success']); // Corrected the variable name

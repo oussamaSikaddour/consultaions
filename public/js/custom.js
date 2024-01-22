@@ -22,6 +22,21 @@ const focusNonHiddenInput = (form) => {
 };
 
 
+function clearErrorsOnFocus(myForm=null) {
+    myForm = myForm ? myForm : document.querySelector('.form');
+    const inputs = myForm.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        // Get all elements with the class "input__error"
+        const errors = myForm.querySelectorAll('.input__error');
+
+        // Loop through each error element and set its innerHTML to an empty string
+        errors.forEach(error => {
+          error.innerHTML = '';
+        });
+      });
+    });
+  }
 
 
 const despatchCustomEvent= (eventName,data={})=>{

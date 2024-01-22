@@ -51,5 +51,10 @@ const registerForms = document.querySelector(".forms");
     registerSecondForm.setAttribute("inert", "");
     registerFirstForm.removeAttribute("inert");
 })
+
+$wire.on('form-submitted',()=>{
+    const registerSecondForm = document.querySelector(".form--2");
+        clearErrorsOnFocus(registerSecondForm)
+})
 </script>
 @endscript

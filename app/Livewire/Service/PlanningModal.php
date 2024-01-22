@@ -45,6 +45,7 @@ class PlanningModal extends Component
 
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response = ($this->id !== "")
             ? $this->updateForm->save($this->planning)
             : $this->addForm->save();

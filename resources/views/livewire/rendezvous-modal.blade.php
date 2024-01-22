@@ -120,3 +120,12 @@
 
     </form>
 </div>
+
+
+@script
+<script>
+$wire.on('form-submitted',()=>{
+clearErrorsOnFocus()
+})
+</script>
+ @endscript

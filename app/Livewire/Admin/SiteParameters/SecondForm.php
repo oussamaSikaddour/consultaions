@@ -57,7 +57,7 @@ class SecondForm extends Component
 
     public function handleSubmit()
     {
-
+        $this->dispatch('form-submitted');
         $response =  $this->form->save($this->generalSettings);
        if ($response['status']) {
         $this->dispatch('open-toast', $response['success']);

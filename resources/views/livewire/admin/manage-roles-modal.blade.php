@@ -53,8 +53,15 @@ label.addEventListener('keydown', (e) => {
         @this.updateRolesOnKeydownEvent(roleChoicesInputs[index].value)
       }
     })
+
 });
 
+
+
+
+$wire.on('form-submitted',()=>{
+        clearErrorsOnFocus()
+         })
 </script>
 
 

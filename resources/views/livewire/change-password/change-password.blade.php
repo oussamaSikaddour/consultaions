@@ -17,3 +17,14 @@
         <button type="submit" class="button button--primary">@lang("forms.common.submit-btn")</button>
     </div>
 </form>
+
+
+@script
+<script>
+
+$wire.on('form-submitted',()=>{
+       clearErrorsOnFocus()
+        })
+</script>
+
+@endscript

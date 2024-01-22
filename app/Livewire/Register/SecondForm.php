@@ -26,6 +26,7 @@ class SecondForm extends Component
     }
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response =  $this->form->save();
        if ($response['status']) {
          $this->reset();

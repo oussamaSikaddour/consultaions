@@ -40,5 +40,10 @@ $wire.on("first-step-succeeded", () => {
     focusNonHiddenInput(sitParamsSecondForm);
 }, 500);
 })
+
+
+      $wire.on('form-submitted',()=>{
+        clearErrorsOnFocus()
+         })
 </script>
 @endscript

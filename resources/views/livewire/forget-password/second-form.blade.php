@@ -45,5 +45,10 @@ const forgetPasswordSecondForm= document.querySelector(".form--2");
     forgetPasswordSecondForm.setAttribute("inert", "");
     forgetPasswordFirstForm.removeAttribute("inert");
 })
+
+$wire.on('form-submitted',()=>{
+    const forgetPasswordSecondForm= document.querySelector(".form--2");
+        clearErrorsOnFocus(orgetPasswordSecondForm)
+})
 </script>
 @endscript

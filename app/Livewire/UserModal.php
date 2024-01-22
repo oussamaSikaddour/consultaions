@@ -55,7 +55,7 @@ class UserModal extends Component
 
     public function handleSubmit()
     {
-
+        $this->dispatch('form-submitted');
         $response = ($this->id !== "")
             ? $this->updateForm->save($this->user)
             : $this->addForm->save();

@@ -40,6 +40,7 @@ class ServiceModal extends Component
 
         public function handleSubmit()
         {
+            $this->dispatch('form-submitted');
             $response = ($this->id !== "")
                 ? $this->updateForm->save($this->service)
                 : $this->addForm->save();

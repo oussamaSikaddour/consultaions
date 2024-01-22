@@ -42,6 +42,7 @@ class ConsultationsPlaceModal extends Component
 
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response = ($this->id !== "")
             ? $this->updateForm->save($this->consultationsPlace)
             : $this->addForm->save();

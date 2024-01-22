@@ -12,7 +12,7 @@ class Login extends Component
 
     public function handelSubmit()
     {
-
+        $this->dispatch('form-submitted');
         $response =  $this->form->save();
         $this->form->reset();
        if ($response['status']) {

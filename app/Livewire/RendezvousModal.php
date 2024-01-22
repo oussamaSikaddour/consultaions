@@ -111,7 +111,6 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
     public function updated($property)
     {
 
-        $this->planningDaysOptions=[""=>"-- choisir une date --"];
      if($property ==="dateMin"){
       $this->manageTheRendezVousPeriodSelected();
      }
@@ -125,14 +124,17 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
        }
         if ($property === "form.specialty"){
             $this->checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty($this->medicalFileId,$this->form->specialty);
-            $this->form->consultation_place_id="";
+            $this->form->consultation_place_id="unknown";
             $this->daira="";
             $this->doctorsOptions= $this->populateDoctorsOptions($this->doctors());
+
         }
         if ($property === "form.consultation_place_id"){
             $this->doctorsOptions =$this->populateDoctorsOptions($this->doctors());
+
         }
         if ($property === "daira"){
+
             $this->form->consultation_place_id="";
             $this->form->doctor_id="";
             $this->doctorsOptions = $this->populateDoctorsOptions($this->doctors());
@@ -141,12 +143,7 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
             );
         }
         if (in_array($property, ['form.doctor_id','daira','form.consultation_place_id', 'dateMin', 'dateMax']) ){
-           $this->planningDaysOptions=  $this->populateSelectorOption(
-                $this->planningDays(),
-                $this->planningDaysOptions,
-                "id",
-                "day_at"
-                );
+         $this->planningDaysOptions = $this->populateRendezVousOption($this->planningDays());
         }
     }
 
@@ -184,6 +181,7 @@ public function checkIfTheUserHasAlreadyAnUpcomingRendezVousWithTheSameSpecialty
 
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response = $this->form->save();
         if ($response['status']) {
             $this->dispatch('update-rendezvous-table');

@@ -15,6 +15,7 @@ class FirstForm extends Component
 
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $this->forgetPasswordEmail = $this->form->email;
         $response =  $this->form->save();
        if ($response['status']) {

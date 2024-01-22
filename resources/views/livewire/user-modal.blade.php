@@ -84,3 +84,10 @@ if (Auth::user()->userable_type==="admin_service"){
     </form>
 
 </div>
+@script
+<script>
+$wire.on('form-submitted',()=>{
+clearErrorsOnFocus()
+})
+</script>
+ @endscript

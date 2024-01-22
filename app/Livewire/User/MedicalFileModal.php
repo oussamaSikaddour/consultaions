@@ -45,6 +45,7 @@ class MedicalFileModal extends Component
 
     public function handleSubmit()
     {
+        $this->dispatch('form-submitted');
         $response = ($this->id !== "")
             ? $this->updateForm->save($this->medicalFile)
             : $this->addForm->save();

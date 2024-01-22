@@ -53,6 +53,14 @@ trait GeneralTrait
             "name"
            );
     }
+    public function populateRendezVousOption($planningDays){
+     return  $this->populateSelectorOption(
+            $planningDays,
+            [""=>__('selectors.default-option.dates')],
+            "id",
+            "day_at"
+           );
+    }
  public function populateConsultationPlacesOptions($consultationPlaces){
   return  $this->populateSelectorOption(
             $consultationPlaces,
