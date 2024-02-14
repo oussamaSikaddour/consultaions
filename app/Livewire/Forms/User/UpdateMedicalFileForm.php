@@ -25,7 +25,7 @@ class UpdateMedicalFileForm extends Form
         return [
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'birth_date' => 'required|date|after:1990-01-01|before:' . Carbon::now()->subWeek()->format('Y-m-d'),
+            'birth_date' => 'required|date|date_format:Y-m-d|after:1920-01-01|before:' . Carbon::now()->subWeek()->format('Y-m-d'),
             'address' => 'required|string|min:10|max:255',
             'tel' => [
                 'required',
