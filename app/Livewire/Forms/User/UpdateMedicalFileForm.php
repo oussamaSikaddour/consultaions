@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Livewire\Forms\User;
-
+use Illuminate\Support\Carbon;
 use App\Models\MedicalFile;
 use Livewire\Attributes\Rule;
+
 use Livewire\Form;
 
 class UpdateMedicalFileForm extends Form
@@ -24,7 +25,7 @@ class UpdateMedicalFileForm extends Form
         return [
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date|after:1990-01-01|before:' . Carbon::now()->subWeek()->format('Y-m-d'),
             'address' => 'required|string|min:10|max:255',
             'tel' => [
                 'required',

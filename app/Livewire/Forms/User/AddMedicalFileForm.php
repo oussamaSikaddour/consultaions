@@ -5,6 +5,7 @@ namespace App\Livewire\Forms\User;
 use App\Models\MedicalFile;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
+use Illuminate\Support\Carbon;
 use Livewire\Form;
 
 class AddMedicalFileForm extends Form
@@ -23,7 +24,7 @@ class AddMedicalFileForm extends Form
         return [
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date|after:1990-01-01|before:' . Carbon::now()->subWeek()->format('Y-m-d'),
             'address' => 'required|string|min:10|max:255',
             'tel' => [
                 'required',
