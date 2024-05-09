@@ -42,7 +42,7 @@ class Dialog extends Component
         else {
             $this->dispatch($this->actionEvent['event']);
         }
-        $this->closeDialog();
+        $this->dispatch("user-chose-yes");
    }
 
     public function render()

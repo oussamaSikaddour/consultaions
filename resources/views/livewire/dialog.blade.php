@@ -45,7 +45,7 @@ $dialogQuestion = [
     </div>
     <div class="box__footer">
         <button class="button box__closer" wire:click="closeDialog">Non</button>
-        <button class="button button--primary" wire:click="confirmAction">Oui</button>
+        <button class="button button--primary box__confirmation" wire:click="confirmAction">Oui</button>
     </div>
 </div>
 
@@ -54,5 +54,14 @@ $dialogQuestion = [
         document.addEventListener('dialog-will-be-close', function(event) {
             @this.closeDialog();
         });
+
+        $wire.on("user-chose-yes",()=>{
+            @this.closeDialog();
+            const dialog = document.querySelector(".box");
+            dialog.classList.remove("open");
+            const isOpen = dialog.classList.contains("open");
+           setAriaAttributes(!isOpen, isOpen ? "0" : "-1",dialog);
+            toggleInertForAllExceptOpenedElement(dialog,"open")
+        })
     </script>
 @endscript

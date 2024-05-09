@@ -25,7 +25,7 @@ class CPlaceImport implements ToModel, WithHeadingRow
                 'max:255',
                 Rule::unique('consultation_places','name')->where(function ($query) use($row) {
                     return $query->where('daira', $row['daira']);
-                }),
+                })->whereNull('deleted_at'),
             ],
             'adresse' => [
                 'required',
@@ -34,7 +34,7 @@ class CPlaceImport implements ToModel, WithHeadingRow
                 'max:255',
                 Rule::unique('consultation_places','address')->where(function ($query)use($row){
                     return $query->where('daira', $row['daira']);
-                }),
+                })->whereNull('deleted_at'),
             ],
 
             'latitude' => [
